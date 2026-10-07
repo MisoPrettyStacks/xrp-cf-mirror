@@ -77,6 +77,15 @@ def main():
                              "n": int(m.sum())})
         stats["calibration"] = bins
 
+    # recent scored predictions (newest first) for the predictions log
+    recent = []
+    for i in range(len(ys)-1, max(-1, len(ys)-21), -1):
+        recent.append({"window_open": wins[i],
+                       "p_up": round(float(ps[i]), 3),
+                       "outcome": "up" if ys[i] == 1 else "down",
+                       "correct": bool((ps[i] > 0.5) == ys[i])})
+    stats["recent"] = recent
+
     with open(os.path.join(BASE, "stats.json"), "w") as f:
         json.dump(stats, f, indent=1)
     print(json.dumps(stats, indent=1)[:800])

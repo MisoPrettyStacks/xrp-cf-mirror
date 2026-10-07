@@ -49,6 +49,10 @@ footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
 .price .big { font-size: clamp(28px, 5vw, 40px); font-weight: 700; font-variant-numeric: tabular-nums; }
 .price .meta { color: var(--muted); font-size: 13px; }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
 </head>
 <body>
 <div class="wrap">
@@ -90,6 +94,21 @@ footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
 </div>
 
 <div class="card">
+  <h2>Recent predictions</h2>
+  <div id="predwait">
+    <p class="muted" style="font-size:14px">The ledger is warming up. Stats activate after the first <b>20</b> scored forecasts.</p>
+    <div class="bar" style="background:var(--panel2)"><i id="predprog" style="width:0%;background:var(--accent)"></i></div>
+    <p class="muted" style="font-size:13px"><span id="predcount">0</span> / 20 scored · <span id="predeta">—</span></p>
+  </div>
+  <div id="predlog" style="display:none">
+    <table>
+      <tr><th>Window (UTC)</th><th>P(up)</th><th>Outcome</th><th></th></tr>
+      <tbody id="predrows"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
   <h2>Live out-of-sample accuracy</h2>
   <p class="muted" style="font-size:14px">Every forecast this page makes is logged and scored against the actual settlement. Nothing is back-filled. <span id="statsupd" class="muted"></span></p>
   <div class="grid g4" style="margin-top:10px">
@@ -116,13 +135,65 @@ footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
 </div>
 
 <section class="method card">
-  <h2>Methodology in brief</h2>
+  <h2>Methodology, mathematics and theory</h2>
+
+  <h3>0. What is being forecast</h3>
+  <p>Let $t$ index 15-minute windows opening at :00, :15, :30, :45 UTC. Each window has a reference price $K_t$ (the settlement feed's value at the open) and a closing value $C_t$ at the end of the window. The outcome is $$y_t = \mathbf{1}[C_t \geq K_t] \in \{0,1\},$$ i.e. 1 if the window closes at or above its reference ("up"), 0 otherwise. The forecast is $$p_t = \Pr(y_t = 1 \mid \mathcal{F}_t),$$ where $\mathcal{F}_t$ contains only information available at the window open — 5-minute candles that had fully closed, nothing more.</p>
+  <p>Accuracy is judged with <b>strictly proper scoring rules</b> (Brier 1950; Gneiting &amp; Raftery 2007): a forecaster maximizes its expected score only by reporting its true belief. The no-skill reference is $p = \tfrac{1}{2}$ with Brier score $0.25$. The design goal: <i>be calibrated first, extract whatever small real skill exists second, and never be more confident than the live record justifies.</i></p>
+
+  <h3>1. Data</h3>
   <ul>
-    <li><b>Target:</b> P(XRP closes above the window reference), resolved against the settlement feed.</li>
-    <li><b>Features (21):</b> volatility-scaled returns at 6 horizons, prior-bar sign, RSI / Bollinger %B at 15-min and 4-hour, Parkinson volatility, volume z-score, candle body and wick ratios, quarter-hour / hour / weekday indicators.</li>
-    <li><b>Models:</b> LightGBM (15 leaves, heavy regularization) + L2 logistic regression, blended 50/50, isotonic-calibrated, shrunk 50% toward 0.5.</li>
-    <li><b>Validation:</b> walk-forward with 1-day embargo — no lookahead. A leak caught during development (fencepost error on candle timestamps) briefly showed AUC 0.79; fixed before it ever went live.</li>
-    <li><b>Honest ceiling:</b> the literature puts free-data 15-min crypto direction at AUC 0.52–0.55. This model sits at the top of that range.</li>
+    <li><b>Labels:</b> 6,427 settled 15-minute windows (Jul 31 – Oct 7, 2026) from free public market history — each with its reference (strike), outcome, and timestamps. This is the settlement truth the model is measured against.</li>
+    <li><b>Features:</b> 5-minute XRP-USD candles from the free Coinbase Exchange public API (no key). 20,441 bars covering the full label period plus warmup.</li>
+    <li><b>Alignment:</b> Coinbase candle timestamps mark the <i>start</i> of each 5-minute bucket. Features for window $t$ use the last fully-closed bar <i>before</i> the window open — using the bar <i>at</i> the open would leak the window's first 5 minutes. This exact bug was caught during development (it briefly showed a fraudulent AUC of 0.79) and fixed before anything went live.</li>
+  </ul>
+
+  <h3>2. Features (21, all dimensionless)</h3>
+  <p>Volatility is an exponentially weighted moving average of squared 5-minute log returns $r_i = \ln(P_i/P_{i-1})$ (RiskMetrics, J.P. Morgan 1996): $$\sigma_i^2 = \lambda\sigma_{i-1}^2 + (1-\lambda)r_i^2, \qquad \lambda = 0.94.$$</p>
+  <p>Volatility-scaled returns at six horizons: $$z_{k} = \frac{\ln(P_i/P_{i-k})}{\sigma_i\sqrt{k}}, \qquad k \in \{1,3,12,36,144,288\}.$$ Scaling by volatility is what makes short-horizon features work — a 10 bp move means nothing in a storm and everything in calm water (Wiley, <i>Financial Review</i>: realized-vol scaling preserves the jump and order-flow bursts that carry signal).</p>
+  <p>Oscillators at 15-minute and 4-hour resamples — RSI(14), Bollinger %B(20,2) — because the literature finds 4-hour regime features carry roughly a third of total signal (Sobreiro et al. 2026, <i>Forecasting</i>). Volatility and volume microstructure: Parkinson's estimator $$\hat\sigma_P^2 = \frac{1}{20 \cdot 4\ln 2}\sum_{j=i-19}^{i}\ln^2\!\left(\frac{H_j}{L_j}\right),$$ volume z-score vs. the 1-day rolling median, candle body ratio $\frac{|C-O|}{H-L}$, and upper/lower wick ratios (proxies for intrabar aggression). Clock-time: quarter-hour-of-hour, hour-of-day, day-of-week, weekend flag — crypto shows periodic algo-driven bursts at clock marks (Kim &amp; Hansen 2026). A conditional reversal term $-\mathrm{sign}(z_3)\max(0,|z_3|-1.5)$ fades only large moves, per Kitron &amp; Wengrowicz (2026).</p>
+
+  <h3>3. The two models</h3>
+  <p><b>LightGBM</b> — gradient-boosted decision trees on binary log-loss, deliberately small (15 leaves, minimum 200 samples per leaf, feature/bagging fractions 0.7, L2 $\lambda = 5$). Small trees with heavy regularization because the signal is faint and overfitting is the default outcome.</p>
+  <p><b>Logistic regression</b> — $p = \sigma(w^\top x)$, L2-penalized ($C = 0.5$), on standardized features. Kept because plain linear boundaries generalize best across regime shifts (Sobreiro et al.: LogReg beat XGBoost/LightGBM on the 2025 holdout).</p>
+  <p>The two are blended evenly: $$p_{\text{blend}} = \tfrac{1}{2}\,p_{\text{lgbm}} + \tfrac{1}{2}\,p_{\text{lr}}.$$</p>
+
+  <h3>4. Calibration and shrinkage</h3>
+  <p>Raw model outputs are recalibrated with <b>isotonic regression</b> fit on walk-forward out-of-fold predictions — a non-parametric map from raw scores to empirical frequencies. Then the <b>shrinkage guard</b>: $$p_t = \tfrac{1}{2} + \lambda_s\,(\tilde p_t - \tfrac{1}{2}), \qquad \lambda_s = 0.5,$$ pulling every forecast halfway back to 50%. With Brier skill in the tenths of a percent, humility is optimal: the model must <i>earn</i> wider confidence with roughly a thousand scored forecasts.</p>
+
+  <h3>5. Walk-forward validation (the honest scoreboard)</h3>
+  <p>Five folds, expanding training window, 7-day test blocks, 1-day embargo between train and test (purged/embargoed CV is mandatory with overlapping 15-minute labels — random splits leak across the horizon and inflate everything). Results on 3,360 out-of-sample windows:</p>
+  <table>
+    <tr><th>Model</th><th>AUC</th><th>Accuracy</th><th>Brier skill</th></tr>
+    <tr><td>LightGBM</td><td>0.539</td><td>53.2%</td><td>−1.1%</td></tr>
+    <tr><td>Logistic regression</td><td>0.538</td><td>53.2%</td><td>+0.0%</td></tr>
+    <tr><td><b>Blend + isotonic</b></td><td><b>0.552</b></td><td><b>54.1%</b></td><td><b>+1.0%</b></td></tr>
+  </table>
+  <p>This sits at the top of the literature's credible range (AUC 0.52–0.55 for free 15-min crypto data). Anything claiming much more is overfit, a different target, or for sale.</p>
+
+  <h3>6. The self-improvement system</h3>
+  <p><b>Champion/challenger.</b> Every Sunday the system refreshes its data and trains a challenger. The challenger is promoted only if its walk-forward Brier skill beats the champion's by a real margin ($> 0.05$pp, not noise). Otherwise the champion stands and the decision is logged.</p>
+  <p><b>Research agent.</b> Every Monday it scans arXiv (q-fin), SSRN, Ivy League repositories, and PhD theses for new work on short-horizon crypto predictability. Promising ideas are implemented and backtested; only winners survive — a volume-gated reversal term from Kitron &amp; Wengrowicz was tested and discarded when it failed to beat the champion out-of-sample.</p>
+  <p><b>Live ledger.</b> Every 5-minute forecast is logged with its window and probability; a scorer matches them against settlements and publishes rolling accuracy, AUC, Brier skill, and calibration bins. The page's stats section is computed from this ledger — never back-filled.</p>
+
+  <h3>7. Limits and honest expectations</h3>
+  <ul>
+    <li>A 15-minute crypto direction forecast from free price/volume data should be expected to deliver Brier skill of at most a few percent and a hit rate within a point or two of 50%. If the live record shows no skill, the page says so.</li>
+    <li>The scores concern probabilistic accuracy, not trading profit; fees, spread, and slippage are ignored — and at ~1 bp of gross edge per bet vs. 5–20 bp round-trip costs, spot trading on this signal loses money. The prediction-market framing is the only one where the cost math works.</li>
+    <li>With AUC ≈ 0.55, honest probabilities live in roughly $[0.44, 0.65]$. That looks unimpressive and it is the truth. Widening the range would be a calibration failure.</li>
+    <li>GitHub Actions schedules are best-effort: a missed window is a gap in the ledger, never an invented forecast.</li>
+  </ul>
+
+  <h3>8. References</h3>
+  <ul style="font-size:13px">
+    <li>Kitron &amp; Wengrowicz (2026), "Short-horizon mean reversion in cryptocurrency markets." arXiv:2608.21888.</li>
+    <li>Kim &amp; Hansen (2026), "The Quarter-Hour Effect." arXiv:2607.09426.</li>
+    <li>Wen (2022), "Intraday Return Predictability in the Cryptocurrency Markets." <i>N. Am. J. Econ. Finance</i>.</li>
+    <li>Sobreiro et al. (2026), "Multi-Timeframe Feature Engineering for Bitcoin Market Prediction." <i>Forecasting</i> 8(3):40.</li>
+    <li>"Volatility ≠ Risk" (2026), <i>Financial Review</i> (Wiley).</li>
+    <li>"The Bounce Has No Direction" (2026), arXiv:2606.29591.</li>
+    <li>Brier (1950); Gneiting &amp; Raftery (2007) — proper scoring rules.</li>
+    <li>Freund &amp; Schapire (1997) — the Hedge algorithm; Platt (1999) — probability calibration.</li>
   </ul>
 </section>
 
@@ -176,6 +247,28 @@ async function loadStats() {
     }
     if (s.updated) document.getElementById("statsupd").textContent =
       "Updated " + new Date(s.updated).toLocaleString() + ".";
+    // predictions log + countdown
+    const n = s.scored || 0;
+    document.getElementById("predcount").textContent = Math.min(n, 20);
+    document.getElementById("predprog").style.width = Math.min(100, n/20*100) + "%";
+    if (n < 20) {
+      const perMin = 4, left = Math.ceil((20 - n) / perMin);
+      document.getElementById("predeta").textContent = "about " + left + " min to go";
+    } else {
+      document.getElementById("predwait").style.display = "none";
+      const log = document.getElementById("predlog");
+      log.style.display = "block";
+      const tb = document.getElementById("predrows");
+      tb.innerHTML = "";
+      (s.recent || []).forEach(r => {
+        const tr = document.createElement("tr");
+        const t = new Date(r.window_open).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+        tr.innerHTML = `<td>${t}</td><td>${(r.p_up*100).toFixed(1)}%</td>` +
+          `<td class="${r.outcome === 'up' ? 'up' : 'down'}">${r.outcome}</td>` +
+          `<td class="${r.correct ? 'up' : 'down'}">${r.correct ? '✓' : '✗'}</td>`;
+        tb.appendChild(tr);
+      });
+    }
   } catch(e) {}
 }
 function tick() {
