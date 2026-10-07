@@ -3,124 +3,190 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>XRP CF Mirror — 15-Minute Forecast</title>
+<title>XRP CF Mirror — 15-Minute Direction Forecast</title>
 <style>
-  :root { --bg:#0d1117; --card:#161b22; --line:#30363d; --txt:#e6edf3; --dim:#8b949e; --up:#3fb950; --dn:#f85149; }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; padding:20px; max-width:720px; margin:0 auto; }
-  h1 { font-size:1.4rem; margin-bottom:4px; }
-  .sub { color:var(--dim); font-size:.85rem; margin-bottom:20px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; margin-bottom:16px; }
-  .card h2 { font-size:.95rem; color:var(--dim); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px; }
-  .big { font-size:2.6rem; font-weight:700; }
-  .up { color:var(--up); } .dn { color:var(--dn); }
-  .bar { height:14px; background:#21262d; border-radius:7px; overflow:hidden; margin:12px 0; display:flex; }
-  .bar .fill-up { background:var(--up); } .bar .fill-dn { background:var(--dn); }
-  .row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--line); font-size:.9rem; }
-  .row:last-child { border-bottom:none; }
-  .row .k { color:var(--dim); }
-  .note { font-size:.8rem; color:var(--dim); line-height:1.5; }
-  #countdown { font-variant-numeric:tabular-nums; }
-  .stale { color:#d29922; }
+:root {
+  --bg: #0b0f14; --panel: #121923; --panel2: #0f151d; --ink: #e6edf3; --muted: #8b9aab; --line: #243044;
+  --up: #2dd4a0; --down: #ff6b6b; --accent: #7aa2ff; --warn: #f5b84a;
+  color-scheme: dark light;
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #f4f6fa; --panel: #ffffff; --panel2: #f0f3f8; --ink: #0f1720; --muted: #5b6b7c; --line: #dbe2ea;
+    --up: #0a9e72; --down: #d64545; --accent: #2f5fe0; --warn: #a9690a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px 80px; }
+header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 28px 0 14px; }
+h1 { font-size: clamp(22px, 4vw, 32px); margin: 0; letter-spacing: -0.02em; }
+h2 { font-size: 20px; margin: 0 0 10px; letter-spacing: -0.01em; }
+.sub { color: var(--muted); margin: 4px 0 0; max-width: 60ch; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--line); background: var(--panel2); color: var(--muted); margin-right: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.dot.ok { background: var(--up); } .dot.warn { background: var(--warn); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 14px 0; }
+.grid { display: grid; gap: 14px; }
+.g2 { grid-template-columns: 1fr; } .g4 { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 860px) { .g2 { grid-template-columns: 1fr 1fr; } .g4 { grid-template-columns: repeat(4, 1fr); } }
+.stat { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.stat .k { color: var(--muted); font-size: 12px; }
+.stat .v { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.stat .s { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.pup { font-size: 44px; font-weight: 750; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.bar { height: 10px; border-radius: 6px; background: var(--down); position: relative; overflow: hidden; margin: 8px 0; }
+.bar i { position: absolute; inset: 0 auto 0 0; background: var(--up); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; }
+.muted { color: var(--muted); } .up { color: var(--up); } .down { color: var(--down); } .warn { color: var(--warn); }
+.note { border-left: 3px solid var(--warn); padding: 6px 12px; background: var(--panel2); border-radius: 0 8px 8px 0; color: var(--muted); font-size: 13px; margin: 10px 0; }
+section.method p, section.method li { max-width: 86ch; }
+section.method ul { padding-left: 22px; }
+code { background: var(--panel2); padding: 1px 6px; border-radius: 5px; font-size: 13px; }
+footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
+.price { text-align: right; }
+.price .big { font-size: clamp(28px, 5vw, 40px); font-weight: 700; font-variant-numeric: tabular-nums; }
+.price .meta { color: var(--muted); font-size: 13px; }
 </style>
 </head>
 <body>
-<h1>XRP CF Mirror</h1>
-<p class="sub">15-minute direction forecast, trained on settlement truth &mdash; free &amp; open</p>
+<div class="wrap">
 
-<div class="card">
-  <h2>Current window <span id="win"></span></h2>
-  <div class="row"><span class="k">Closes in</span><span id="countdown">—</span></div>
-  <div class="row"><span class="k">P(up)</span><span class="big up" id="pup">—</span></div>
-  <div class="bar"><div class="fill-up" id="barup"></div><div class="fill-dn" id="bardn"></div></div>
-  <div class="row"><span class="k">P(down)</span><span class="big dn" id="pdn">—</span></div>
-  <div class="row"><span class="k">Updated</span><span id="asof">—</span></div>
-  <div class="row"><span class="k">Model components</span><span id="comp">—</span></div>
+<header class="top">
+  <div>
+    <h1>XRP CF Mirror</h1>
+    <p class="sub">15-minute direction forecast, trained on settlement truth. Free, open, and self-improving.</p>
+    <div style="margin-top:8px">
+      <span class="badge"><span class="dot ok" id="livedot"></span><span id="livetxt">live</span></span>
+      <span class="badge">LightGBM + LogReg blend</span>
+      <span class="badge">OOS AUC 0.55</span>
+    </div>
+  </div>
+  <div class="price">
+    <div class="big up" id="pup_big">—</div>
+    <div class="meta">probability XRP closes higher<br><span id="winlabel">—</span></div>
+  </div>
+</header>
+
+<div class="grid g2">
+  <div class="card">
+    <h2>Current window</h2>
+    <div class="pup"><span class="up" id="pup">—</span> <span style="font-size:20px" class="muted">/ <span class="down" id="pdn">—</span></span></div>
+    <div class="bar"><i id="barup" style="width:50%"></i></div>
+    <table>
+      <tr><th>Window</th><td id="win">—</td></tr>
+      <tr><th>Closes in</th><td id="countdown">—</td></tr>
+      <tr><th>Model components</th><td id="comp">—</td></tr>
+      <tr><th>Updated</th><td id="asof">—</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>How it works</h2>
+    <p class="muted" style="font-size:14px">Every 5 minutes: fresh 5-minute candles → 21 features (volatility-scaled reversals, 4-hour regime, candle shape, clock-time) → LightGBM + logistic regression blend → isotonic calibration → shrinkage toward 50%.</p>
+    <p class="muted" style="font-size:14px">Labels come from 6,427 settled 15-minute windows of free public market history — the same settlement feed the windows resolve on. No order-book data, no paid feeds.</p>
+    <div class="note">A 15-minute crypto direction model built from free data should be expected to land within a point or two of 50%. This one is honest about that — and the live ledger below proves it.</div>
+  </div>
 </div>
 
 <div class="card">
-  <h2>Honest track record</h2>
-  <div class="row"><span class="k">Out-of-sample windows</span><span>3,360</span></div>
-  <div class="row"><span class="k">AUC</span><span>0.55</span></div>
-  <div class="row"><span class="k">Accuracy</span><span>54.1%</span></div>
-  <div class="row"><span class="k">Brier skill vs naive</span><span>+1.0%</span></div>
-  <div class="row"><span class="k">Training windows</span><span>6,427 (Jul&ndash;Oct 2026)</span></div>
-  <p class="note" style="margin-top:10px">Walk-forward validated with a 1-day embargo — no lookahead. The literature says 0.52&ndash;0.55 AUC is the credible ceiling for free 15-min crypto data; this model sits at the top of that range. Probabilities are shrunk toward 50% until the live ledger earns wider confidence.</p>
+  <h2>Live out-of-sample accuracy</h2>
+  <p class="muted" style="font-size:14px">Every forecast this page makes is logged and scored against the actual settlement. Nothing is back-filled. <span id="statsupd" class="muted"></span></p>
+  <div class="grid g4" style="margin-top:10px">
+    <div class="stat"><div class="k">Scored forecasts</div><div class="v" id="s_n">—</div></div>
+    <div class="stat"><div class="k">Accuracy · last 100</div><div class="v" id="s_acc">—</div></div>
+    <div class="stat"><div class="k">AUC · last 100</div><div class="v" id="s_auc">—</div></div>
+    <div class="stat"><div class="k">Brier skill · last 100</div><div class="v" id="s_brier">—</div></div>
+  </div>
+  <div class="grid g4" style="margin-top:10px">
+    <div class="stat"><div class="k">Accuracy · all time</div><div class="v" id="s_acc_all">—</div><div class="s" id="s_n_all"></div></div>
+    <div class="stat"><div class="k">AUC · all time</div><div class="v" id="s_auc_all">—</div></div>
+    <div class="stat"><div class="k">Walk-forward OOS AUC</div><div class="v">0.55</div><div class="s">3,360 windows</div></div>
+    <div class="stat"><div class="k">Training windows</div><div class="v">6,427</div><div class="s">Jul – Oct 2026</div></div>
+  </div>
 </div>
 
 <div class="card">
-  <h2>How it works</h2>
-  <p class="note">Every 5 minutes: fresh 5-min candles &rarr; 21 features (volatility-scaled reversals, 4h regime, candle shape, clock-time) &rarr; LightGBM + logistic regression blend &rarr; isotonic calibration &rarr; shrinkage. Labels come from 6,427 settled 15-minute windows (free public market history). No order-book data, no paid feeds, no secrets.</p>
+  <h2>Self-improvement</h2>
+  <table>
+    <tr><th>Weekly retrain</th><td>Fresh data → challenger trained → promoted only if it beats the champion out-of-sample. <span class="muted">Champion Brier skill: <span id="champ">+1.04%</span></span></td></tr>
+    <tr><th>Research agent</th><td>Scans arXiv, university papers, and PhD theses every Monday for new ideas. Promising ones get implemented and tested; only winners survive.</td></tr>
+    <tr><th>Calibration</th><td>Isotonic recalibration refits on the growing scored history, so probabilities stay honest as regimes change.</td></tr>
+  </table>
 </div>
 
-<div class="card">
-  <h2>Live performance <span class="note" id="statsupd"></span></h2>
-  <div class="row"><span class="k">Scored forecasts</span><span id="s_n">—</span></div>
-  <div class="row"><span class="k">Accuracy (last 100)</span><span id="s_acc">—</span></div>
-  <div class="row"><span class="k">AUC (last 100)</span><span id="s_auc">—</span></div>
-  <div class="row"><span class="k">Brier skill (last 100)</span><span id="s_brier">—</span></div>
-  <div class="row"><span class="k">Accuracy (all time)</span><span id="s_acc_all">—</span></div>
-  <div class="row"><span class="k">AUC (all time)</span><span id="s_auc_all">—</span></div>
-  <p class="note" style="margin-top:10px">Every forecast this page makes is logged and scored against the actual settlement. These numbers update automatically — no cherry-picking. The model retrains weekly; a challenger only replaces the champion if it beats it out-of-sample.</p>
-</div>
+<section class="method card">
+  <h2>Methodology in brief</h2>
+  <ul>
+    <li><b>Target:</b> P(XRP closes above the window reference), resolved against the settlement feed.</li>
+    <li><b>Features (21):</b> volatility-scaled returns at 6 horizons, prior-bar sign, RSI / Bollinger %B at 15-min and 4-hour, Parkinson volatility, volume z-score, candle body and wick ratios, quarter-hour / hour / weekday indicators.</li>
+    <li><b>Models:</b> LightGBM (15 leaves, heavy regularization) + L2 logistic regression, blended 50/50, isotonic-calibrated, shrunk 50% toward 0.5.</li>
+    <li><b>Validation:</b> walk-forward with 1-day embargo — no lookahead. A leak caught during development (fencepost error on candle timestamps) briefly showed AUC 0.79; fixed before it ever went live.</li>
+    <li><b>Honest ceiling:</b> the literature puts free-data 15-min crypto direction at AUC 0.52–0.55. This model sits at the top of that range.</li>
+  </ul>
+</section>
 
+<footer>
+  Free and open — public APIs only, no keys, no paid feeds. Not financial advice.
+</footer>
+
+</div>
 <script>
-const STATS_URL = "https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/data/stats.json";
-async function loadStats() {
-  try {
-    const r = await fetch(STATS_URL + "?t=" + Date.now());
-    const s = await r.json();
-    document.getElementById("s_n").textContent = s.scored ?? "—";
-    const l100 = s.last_100, all = s.all_time;
-    if (l100) {
-      document.getElementById("s_acc").textContent = (l100.accuracy*100).toFixed(1) + "%";
-      document.getElementById("s_auc").textContent = l100.auc.toFixed(3);
-      document.getElementById("s_brier").textContent = (l100.brier_skill_pct >= 0 ? "+" : "") + l100.brier_skill_pct.toFixed(2) + "%";
-    }
-    if (all) {
-      document.getElementById("s_acc_all").textContent = (all.accuracy*100).toFixed(1) + "%";
-      document.getElementById("s_auc_all").textContent = all.auc.toFixed(3);
-    }
-    if (s.updated) document.getElementById("statsupd").textContent =
-      "· updated " + new Date(s.updated).toLocaleString();
-  } catch(e) { /* stats not yet available */ }
-}
-loadStats(); setInterval(loadStats, 300000);
-</script>
-
-<script>
-const DATA_URL = "https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/data/live.json";
+const DATA = "https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/data/";
 let winClose = null;
 async function load() {
   try {
-    const r = await fetch(DATA_URL + "?t=" + Date.now());
-    const d = await r.json();
-    document.getElementById("pup").textContent = (d.p_up*100).toFixed(1) + "%";
-    document.getElementById("pdn").textContent = (d.p_down*100).toFixed(1) + "%";
-    document.getElementById("barup").style.width = (d.p_up*100) + "%";
-    document.getElementById("bardn").style.width = (d.p_down*100) + "%";
+    const d = await (await fetch(DATA + "live.json?t=" + Date.now())).json();
+    const pup = d.p_up, pdn = d.p_down;
+    document.getElementById("pup").textContent = (pup*100).toFixed(1) + "%";
+    document.getElementById("pdn").textContent = (pdn*100).toFixed(1) + "%";
+    document.getElementById("pup_big").textContent = (pup*100).toFixed(1) + "%";
+    document.getElementById("pup_big").className = "big " + (pup >= 0.5 ? "up" : "down");
+    document.getElementById("barup").style.width = (pup*100) + "%";
     document.getElementById("comp").textContent =
-      `lgbm ${(d.components.lgbm*100).toFixed(1)}% / logreg ${(d.components.logreg*100).toFixed(1)}%`;
-    const asof = new Date(d.asof);
-    const age = (Date.now() - asof.getTime())/60000;
-    const asofEl = document.getElementById("asof");
-    asofEl.textContent = asof.toLocaleTimeString() + (age > 12 ? " (stale)" : "");
-    if (age > 12) asofEl.classList.add("stale");
+      `LightGBM ${(d.components.lgbm*100).toFixed(1)}% · LogReg ${(d.components.logreg*100).toFixed(1)}%`;
+    const asof = new Date(d.asof), age = (Date.now() - asof.getTime())/60000;
+    const ae = document.getElementById("asof");
+    ae.textContent = asof.toLocaleTimeString() + (age > 12 ? " (stale)" : "");
+    ae.className = age > 12 ? "warn" : "";
+    document.getElementById("livedot").className = "dot " + (age > 12 ? "warn" : "ok");
+    document.getElementById("livetxt").textContent = age > 12 ? "stale" : "live";
     winClose = new Date(d.window_close);
-    const wo = new Date(d.window_open);
-    document.getElementById("win").textContent =
-      wo.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + "–" +
-      winClose.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  } catch(e) { document.getElementById("pup").textContent = "offline"; }
+    const wo = new Date(d.window_open), f = t => t.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    document.getElementById("win").textContent = f(wo) + " – " + f(winClose);
+    document.getElementById("winlabel").textContent = f(wo) + " – " + f(winClose) + " window";
+  } catch(e) {}
+}
+async function loadStats() {
+  try {
+    const s = await (await fetch(DATA + "stats.json?t=" + Date.now())).json();
+    document.getElementById("s_n").textContent = s.scored ?? "—";
+    const pct = x => (x*100).toFixed(1) + "%", sgn = x => (x >= 0 ? "+" : "") + x.toFixed(2) + "%";
+    if (s.last_100) {
+      document.getElementById("s_acc").textContent = pct(s.last_100.accuracy);
+      document.getElementById("s_auc").textContent = s.last_100.auc.toFixed(3);
+      const b = document.getElementById("s_brier");
+      b.textContent = sgn(s.last_100.brier_skill_pct);
+      b.className = "v " + (s.last_100.brier_skill_pct >= 0 ? "up" : "down");
+    }
+    if (s.all_time) {
+      document.getElementById("s_acc_all").textContent = pct(s.all_time.accuracy);
+      document.getElementById("s_auc_all").textContent = s.all_time.auc.toFixed(3);
+      document.getElementById("s_n_all").textContent = s.all_time.n + " forecasts";
+    }
+    if (s.updated) document.getElementById("statsupd").textContent =
+      "Updated " + new Date(s.updated).toLocaleString() + ".";
+  } catch(e) {}
 }
 function tick() {
   if (!winClose) return;
-  let s = Math.max(0, Math.floor((winClose - Date.now())/1000));
-  const m = String(Math.floor(s/60)).padStart(2,"0"), ss = String(s%60).padStart(2,"0");
-  document.getElementById("countdown").textContent = `${m}:${ss}`;
+  const s = Math.max(0, Math.floor((winClose - Date.now())/1000));
+  document.getElementById("countdown").textContent =
+    String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0");
   if (s === 0) load();
 }
-load(); setInterval(load, 60000); setInterval(tick, 1000); tick();
+load(); loadStats();
+setInterval(load, 60000); setInterval(loadStats, 300000); setInterval(tick, 1000); tick();
 </script>
 </body>
 </html>
