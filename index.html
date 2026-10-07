@@ -22,28 +22,28 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 h1 { font-size: clamp(22px, 4vw, 32px); margin: 0; letter-spacing: -0.02em; }
 h2 { font-size: 20px; margin: 0 0 10px; letter-spacing: -0.01em; }
 .sub { color: var(--muted); margin: 4px 0 0; max-width: 60ch; }
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--line); background: var(--panel2); color: var(--muted); margin-right: 6px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 0; font-size: 12px; border: 1px solid var(--line); background: var(--panel2); color: var(--muted); margin-right: 6px; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
 .dot.ok { background: var(--up); } .dot.warn { background: var(--warn); }
-.card { background: var(--panel); border: none; border-radius: 14px; padding: 16px; margin: 14px 0; }
+.card { background: var(--panel); border: none; border-radius: 0; padding: 16px; margin: 14px 0; }
 .grid { display: grid; gap: 14px; }
 .g2 { grid-template-columns: 1fr; } .g4 { grid-template-columns: repeat(2, 1fr); }
 @media (min-width: 860px) { .g2 { grid-template-columns: 1fr 1fr; } .g4 { grid-template-columns: repeat(4, 1fr); } }
-.stat { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.stat { background: var(--panel2); border: 1px solid var(--line); border-radius: 0; padding: 10px 12px; }
 .stat .k { color: var(--muted); font-size: 12px; }
 .stat .v { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; }
 .stat .s { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
 .pup { font-size: 44px; font-weight: 750; font-variant-numeric: tabular-nums; line-height: 1.1; }
-.bar { height: 10px; border-radius: 6px; background: var(--down); position: relative; overflow: hidden; margin: 8px 0; }
+.bar { height: 10px; border-radius: 0; background: var(--down); position: relative; overflow: hidden; margin: 8px 0; }
 .bar i { position: absolute; inset: 0 auto 0 0; background: var(--up); }
 table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
 th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { color: var(--muted); font-weight: 500; }
 .muted { color: var(--muted); } .up { color: var(--up); } .down { color: var(--down); } .warn { color: var(--warn); }
-.note { border-left: 3px solid var(--warn); padding: 6px 12px; background: var(--panel2); border-radius: 0 8px 8px 0; color: var(--muted); font-size: 13px; margin: 10px 0; }
+.note { border-left: 3px solid var(--warn); padding: 6px 12px; background: var(--panel2); border-radius: 0; color: var(--muted); font-size: 13px; margin: 10px 0; }
 section.method p, section.method li { max-width: 86ch; }
 section.method ul { padding-left: 22px; }
-code { background: var(--panel2); padding: 1px 6px; border-radius: 5px; font-size: 13px; }
+code { background: var(--panel2); padding: 1px 6px; border-radius: 0; font-size: 13px; }
 footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
 .price { text-align: right; }
 .price .big { font-size: clamp(28px, 5vw, 40px); font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -114,15 +114,15 @@ footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
   <div class="pup" style="margin:8px 0"><span id="total_correct" class="up">—</span><span class="muted" style="font-size:22px"> / <span id="total_scored">—</span> correct</span></div>
   <div class="bar" style="height:12px"><i id="totalbar" style="width:50%"></i></div>
   <p class="muted" style="font-size:13px;margin-bottom:10px">Total accuracy <b id="total_pct" style="color:var(--ink)">—</b> · <span id="total_ci" class="muted"></span></p>
-  <canvas id="accchart" height="120" style="width:100%;height:120px;background:var(--panel2);border:1px solid var(--line);border-radius:10px"></canvas>
+  <canvas id="accchart" height="120" style="width:100%;height:120px;background:var(--panel2);border:1px solid var(--line);border-radius:0"></canvas>
   <p class="muted" style="font-size:12px;margin-top:4px">Running accuracy as scored forecasts accumulate · dashed line = 50% coin flip</p>
 
   <h3 style="margin-top:16px">Reliability <span class="muted" style="font-weight:400;font-size:13px">do the probabilities mean what they say?</span></h3>
-  <canvas id="relchart" height="120" style="width:100%;height:200px;background:var(--panel2);border:1px solid var(--line);border-radius:10px"></canvas>
+  <canvas id="relchart" height="120" style="width:100%;height:200px;background:var(--panel2);border:1px solid var(--line);border-radius:0"></canvas>
   <p class="muted" style="font-size:12px;margin-top:4px">Equal-count bins · bars = 95% interval (overlap-adjusted) · diagonal = perfect calibration</p>
 
   <h3 style="margin-top:16px">Rolling 12-hour Brier <span class="muted" style="font-weight:400;font-size:13px">model vs climatology · lower is better</span></h3>
-  <canvas id="brierchart" height="120" style="width:100%;height:160px;background:var(--panel2);border:1px solid var(--line);border-radius:10px"></canvas>
+  <canvas id="brierchart" height="120" style="width:100%;height:160px;background:var(--panel2);border:1px solid var(--line);border-radius:0"></canvas>
   <p class="muted" style="font-size:12px;margin-top:4px">Trailing 48 scored forecasts · climatology = running base rate</p>
   <div class="grid g4" style="margin-top:10px">
     <div class="stat"><div class="k">Scored forecasts</div><div class="v" id="s_n">—</div></div>
