@@ -40,13 +40,17 @@ def main():
             if r["result"] in ("yes", "no"):
                 truth[r["window_open"]] = 1 if r["result"] == "yes" else 0
 
-    # match
+    # match (blend + per-component)
     ys, ps, wins = [], [], []
+    comp = {"lgbm": [], "logreg": []}
     for r in ledger:
         if r["window_open"] in truth:
             ys.append(truth[r["window_open"]])
             ps.append(r["p_up"])
             wins.append(r["window_open"])
+            c = r.get("components", {})
+            comp["lgbm"].append(c.get("lgbm", r["p_up"]))
+            comp["logreg"].append(c.get("logreg", r["p_up"]))
 
     import numpy as np
     ys = np.array(ys); ps = np.array(ps)
@@ -67,6 +71,17 @@ def main():
         stats["last_500"] = metrics(ys[-500:], ps[-500:])
     if len(ys) >= 20:
         stats["all_time"] = metrics(ys, ps)
+        # per-model accuracy + Brier (AI components running)
+        from sklearn.metrics import brier_score_loss as _bsl
+        stats["models"] = {}
+        for name, cp in comp.items():
+            cpa = np.array(cp)
+            brier = float(_bsl(ys, cpa))
+            stats["models"][name] = {
+                "accuracy": round(float(((cpa > 0.5) == ys).mean()), 4),
+                "brier": round(brier, 5),
+                "brier_skill_pct": round((0.25 - brier) / 0.25 * 100, 2),
+            }
         # calibration bins
         bins = []
         for lo in range(40, 60, 2):

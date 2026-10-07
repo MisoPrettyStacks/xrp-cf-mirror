@@ -123,6 +123,28 @@ footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
     <div class="stat"><div class="k">Walk-forward OOS AUC</div><div class="v">0.55</div><div class="s">3,360 windows</div></div>
     <div class="stat"><div class="k">Training windows</div><div class="v">6,427</div><div class="s">Jul – Oct 2026</div></div>
   </div>
+  <h3 style="margin-top:14px">AI models <span class="muted" style="font-weight:400;font-size:13px">head-to-head on live scored forecasts</span></h3>
+  <div id="modelwait"><p class="muted" style="font-size:13px">Per-model stats appear once scoring begins.</p></div>
+  <table id="modeltable" style="display:none">
+    <tr><th>Model</th><th>Accuracy</th><th>Brier</th><th>Brier skill</th></tr>
+    <tr><td>Blend <span class="muted">(live)</span></td><td id="m_blend_acc">—</td><td id="m_blend_brier">—</td><td id="m_blend_skill">—</td></tr>
+    <tr><td>LightGBM</td><td id="m_lgbm_acc">—</td><td id="m_lgbm_brier">—</td><td id="m_lgbm_skill">—</td></tr>
+    <tr><td>Logistic regression</td><td id="m_lr_acc">—</td><td id="m_lr_brier">—</td><td id="m_lr_skill">—</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Data &amp; history</h2>
+  <p class="muted" style="font-size:14px">Everything the system has ever seen, stored permanently and downloadable. Nothing is overwritten — history only grows.</p>
+  <table>
+    <tr><th>Dataset</th><th>What it is</th><th>Size</th><th></th></tr>
+    <tr><td>Forecast ledger</td><td class="muted">Every live forecast issued, with window and probability</td><td id="d_ledger">—</td><td><a href="https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/data/ledger.jsonl">download</a></td></tr>
+    <tr><td>Scoreboard</td><td class="muted">Rolling accuracy, AUC, Brier, calibration bins</td><td id="d_stats">—</td><td><a href="https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/data/stats.json">download</a></td></tr>
+    <tr><td>Settlement truth</td><td class="muted">6,427 settled windows: strike + outcome, Jul–Oct 2026</td><td>6,427</td><td><a href="https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/main/data/kalshi_history.jsonl">download</a></td></tr>
+    <tr><td>Candles</td><td class="muted">20,441 five-minute XRP-USD bars</td><td>20,441</td><td><a href="https://github.com/MisoPrettyStacks/xrp-cf-mirror">repo</a></td></tr>
+    <tr><td>Agent log</td><td class="muted">Every agent decision, newest first</td><td id="d_log">—</td><td><a href="https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/main/data/agent_log.jsonl">download</a></td></tr>
+    <tr><td>Models</td><td class="muted">Trained LightGBM + calibration artifacts + champion record</td><td>—</td><td><a href="https://github.com/MisoPrettyStacks/xrp-cf-mirror/tree/main/models">repo</a></td></tr>
+  </table>
 </div>
 
 <div class="card">
@@ -260,6 +282,32 @@ async function loadStats() {
     }
     if (s.updated) document.getElementById("statsupd").textContent =
       "Updated " + new Date(s.updated).toLocaleString() + ".";
+    // per-model table
+    if (s.models && s.all_time) {
+      document.getElementById("modelwait").style.display = "none";
+      document.getElementById("modeltable").style.display = "table";
+      const pct = x => (x*100).toFixed(1) + "%", sgn = x => (x >= 0 ? "+" : "") + x.toFixed(2) + "%";
+      const fill = (p, m) => {
+        document.getElementById("m_" + p + "_acc").textContent = pct(m.accuracy);
+        document.getElementById("m_" + p + "_brier").textContent = m.brier.toFixed(5);
+        const e = document.getElementById("m_" + p + "_skill");
+        e.textContent = sgn(m.brier_skill_pct);
+        e.className = m.brier_skill_pct >= 0 ? "up" : "down";
+      };
+      fill("blend", s.all_time);
+      fill("lgbm", s.models.lgbm);
+      fill("lr", s.models.logreg);
+    }
+    // data sizes
+    if (s.scored != null) {
+      document.getElementById("d_ledger").textContent = s.scored + " scored";
+      document.getElementById("d_stats").textContent = "updated " +
+        new Date(s.updated).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+    try {
+      const log = (await (await fetch(MAIN + "data/agent_log.jsonl?t=" + Date.now())).text()).trim().split("\n");
+      document.getElementById("d_log").textContent = log.length + " decisions";
+    } catch(e) {}
     // predictions log + countdown
     const n = s.scored || 0;
     document.getElementById("predcount").textContent = Math.min(n, 20);

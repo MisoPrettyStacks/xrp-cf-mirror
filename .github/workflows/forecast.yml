@@ -33,7 +33,8 @@ jobs:
               sys.exit(0)
           shutil.move('live_new.json', 'live.json')
           rec = {'asof': d['asof'], 'window_open': d['window_open'],
-                 'window_close': d['window_close'], 'p_up': d['p_up']}
+                 'window_close': d['window_close'], 'p_up': d['p_up'],
+                 'components': d.get('components', {})}
           open('ledger.jsonl', 'a').write(json.dumps(rec) + chr(10))
           "
       - name: Commit
