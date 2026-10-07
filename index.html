@@ -111,6 +111,19 @@ footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
 <div class="card">
   <h2>Live out-of-sample accuracy</h2>
   <p class="muted" style="font-size:14px">Every forecast this page makes is logged and scored against the actual settlement. Nothing is back-filled. <span id="statsupd" class="muted"></span></p>
+  <div class="pup" style="margin:8px 0"><span id="total_correct" class="up">—</span><span class="muted" style="font-size:22px"> / <span id="total_scored">—</span> correct</span></div>
+  <div class="bar" style="height:12px"><i id="totalbar" style="width:50%"></i></div>
+  <p class="muted" style="font-size:13px;margin-bottom:10px">Total accuracy <b id="total_pct" style="color:var(--ink)">—</b> · <span id="total_ci" class="muted"></span></p>
+  <canvas id="accchart" height="120" style="width:100%;height:120px;background:var(--panel2);border:1px solid var(--line);border-radius:10px"></canvas>
+  <p class="muted" style="font-size:12px;margin-top:4px">Running accuracy as scored forecasts accumulate · dashed line = 50% coin flip</p>
+
+  <h3 style="margin-top:16px">Reliability <span class="muted" style="font-weight:400;font-size:13px">do the probabilities mean what they say?</span></h3>
+  <canvas id="relchart" height="120" style="width:100%;height:200px;background:var(--panel2);border:1px solid var(--line);border-radius:10px"></canvas>
+  <p class="muted" style="font-size:12px;margin-top:4px">Equal-count bins · bars = 95% interval (overlap-adjusted) · diagonal = perfect calibration</p>
+
+  <h3 style="margin-top:16px">Rolling 12-hour Brier <span class="muted" style="font-weight:400;font-size:13px">model vs climatology · lower is better</span></h3>
+  <canvas id="brierchart" height="120" style="width:100%;height:160px;background:var(--panel2);border:1px solid var(--line);border-radius:10px"></canvas>
+  <p class="muted" style="font-size:12px;margin-top:4px">Trailing 48 scored forecasts · climatology = running base rate</p>
   <div class="grid g4" style="margin-top:10px">
     <div class="stat"><div class="k">Scored forecasts</div><div class="v" id="s_n">—</div></div>
     <div class="stat"><div class="k">Accuracy · last 100</div><div class="v" id="s_acc">—</div></div>
@@ -297,6 +310,98 @@ async function loadStats() {
       fill("blend", s.all_time);
       fill("lgbm", s.models.lgbm);
       fill("lr", s.models.logreg);
+    }
+    // totals + chart
+    if (s.total_scored != null && s.total_scored > 0) {
+      const c = s.total_correct, n = s.total_scored, acc = c / n;
+      document.getElementById("total_correct").textContent = c;
+      document.getElementById("total_scored").textContent = n;
+      document.getElementById("totalbar").style.width = (acc*100) + "%";
+      document.getElementById("total_pct").textContent = (acc*100).toFixed(1) + "%";
+      // Wilson 95% interval so she knows how much to trust it
+      const z = 1.96, d = 1 + z*z/n, ctr = (acc + z*z/(2*n))/d;
+      const half = z*Math.sqrt(acc*(1-acc)/n + z*z/(4*n*n))/d;
+      document.getElementById("total_ci").textContent =
+        `95% range ${((ctr-half)*100).toFixed(1)}–${((ctr+half)*100).toFixed(1)}% on ${n} forecasts`;
+      // chart
+      const cv = document.getElementById("accchart"), ctx = cv.getContext("2d");
+      const W = cv.width = cv.offsetWidth * 2, H = cv.height = 240;
+      ctx.clearRect(0, 0, W, H);
+      const hist = s.accuracy_history || [];
+      if (hist.length > 1) {
+        const lo = 0.4, hi = 0.6, X = i => 40 + i/(hist.length-1)*(W-60), Y = a => H-20 - (a-lo)/(hi-lo)*(H-40);
+        // 50% line
+        ctx.strokeStyle = "#8b9aab"; ctx.setLineDash([8,6]); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(40, Y(0.5)); ctx.lineTo(W-20, Y(0.5)); ctx.stroke();
+        ctx.setLineDash([]);
+        // accuracy line
+        const up = getComputedStyle(document.documentElement).getPropertyValue("--up").trim() || "#2dd4a0";
+        ctx.strokeStyle = up; ctx.lineWidth = 3; ctx.beginPath();
+        hist.forEach((p, i) => { const x = X(i), y = Math.max(10, Math.min(H-10, Y(p.accuracy))); i ? ctx.lineTo(x,y) : ctx.moveTo(x,y); });
+        ctx.stroke();
+        // endpoint dot + label
+        const last = hist[hist.length-1], lx = X(hist.length-1), ly = Y(last.accuracy);
+        ctx.fillStyle = up; ctx.beginPath(); ctx.arc(lx, ly, 7, 0, 7); ctx.fill();
+        ctx.fillStyle = "#8b9aab"; ctx.font = "22px system-ui";
+        ctx.fillText((last.accuracy*100).toFixed(1) + "%", Math.min(lx-70, W-110), Math.max(30, ly-16));
+      } else {
+        ctx.fillStyle = "#8b9aab"; ctx.font = "24px system-ui";
+        ctx.fillText("Chart appears as forecasts are scored…", 40, H/2);
+      }
+    }
+    // reliability chart
+    if (s.reliability && s.reliability.length > 2) {
+      const cv = document.getElementById("relchart"), ctx = cv.getContext("2d");
+      const W = cv.width = cv.offsetWidth * 2, H = cv.height = 400;
+      ctx.clearRect(0, 0, W, H);
+      const lo = 0.35, hi = 0.65, X = a => 50 + (a-lo)/(hi-lo)*(W-70), Y = a => H-40 - (a-lo)/(hi-lo)*(H-60);
+      const mut = "#8b9aab", up = getComputedStyle(document.documentElement).getPropertyValue("--up").trim() || "#2dd4a0";
+      // diagonal
+      ctx.strokeStyle = mut; ctx.setLineDash([8,6]); ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(X(lo), Y(lo)); ctx.lineTo(X(hi), Y(hi)); ctx.stroke(); ctx.setLineDash([]);
+      // axes labels
+      ctx.fillStyle = mut; ctx.font = "20px system-ui";
+      ctx.fillText("0.35", X(0.35)-10, H-12); ctx.fillText("0.65", X(0.65)-10, H-12);
+      // bins with error bars
+      s.reliability.forEach(b => {
+        const x = X(b.pred), y = Y(b.actual), y1 = Y(b.hi), y2 = Y(b.lo);
+        ctx.strokeStyle = up; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x-10, y1); ctx.lineTo(x+10, y1); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x-10, y2); ctx.lineTo(x+10, y2); ctx.stroke();
+        ctx.fillStyle = up; ctx.beginPath(); ctx.arc(x, y, 8, 0, 7); ctx.fill();
+        ctx.fillStyle = mut; ctx.font = "18px system-ui";
+        ctx.fillText("n=" + b.n, x-16, H-12);
+      });
+    }
+    // rolling brier chart
+    if (s.brier_rolling && s.brier_rolling.length > 1) {
+      const cv = document.getElementById("brierchart"), ctx = cv.getContext("2d");
+      const W = cv.width = cv.offsetWidth * 2, H = cv.height = 320;
+      ctx.clearRect(0, 0, W, H);
+      const r = s.brier_rolling;
+      let mn = 0.2, mx = 0.26;
+      r.forEach(p => { mn = Math.min(mn, p.model, p.climatology); mx = Math.max(mx, p.model, p.climatology); });
+      const pad = (mx-mn)*0.2; mn -= pad; mx += pad;
+      const X = i => 50 + i/(r.length-1)*(W-70), Y = v => H-30 - (v-mn)/(mx-mn)*(H-50);
+      const mut = "#8b9aab", up = getComputedStyle(document.documentElement).getPropertyValue("--up").trim() || "#2dd4a0";
+      const dn = getComputedStyle(document.documentElement).getPropertyValue("--down").trim() || "#ff6b6b";
+      // 0.25 reference
+      if (mn < 0.25 && mx > 0.25) {
+        ctx.strokeStyle = mut; ctx.setLineDash([8,6]); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(50, Y(0.25)); ctx.lineTo(W-20, Y(0.25)); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = mut; ctx.font = "20px system-ui"; ctx.fillText("0.25 no-skill", 56, Y(0.25)-8);
+      }
+      const line = (key, color) => {
+        ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.beginPath();
+        r.forEach((p, i) => { const x = X(i), y = Y(p[key]); i ? ctx.lineTo(x,y) : ctx.moveTo(x,y); });
+        ctx.stroke();
+      };
+      line("climatology", mut); line("model", up);
+      // legend
+      ctx.font = "22px system-ui";
+      ctx.fillStyle = up; ctx.fillText("— model", 60, 34);
+      ctx.fillStyle = mut; ctx.fillText("— climatology", 200, 34);
     }
     // data sizes
     if (s.scored != null) {

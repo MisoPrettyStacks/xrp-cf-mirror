@@ -101,6 +101,57 @@ def main():
                        "correct": bool((ps[i] > 0.5) == ys[i])})
     stats["recent"] = recent
 
+    # running accuracy history for the chart (every 10th scored forecast)
+    correct = ((ps > 0.5) == ys)
+    hist = []
+    for i in range(10, len(ys) + 1, 10):
+        hist.append({"n": i, "accuracy": round(float(correct[:i].mean()), 4),
+                     "correct": int(correct[:i].sum())})
+    if len(ys) % 10:
+        hist.append({"n": len(ys), "accuracy": round(float(correct.mean()), 4),
+                     "correct": int(correct.sum())})
+    stats["accuracy_history"] = hist
+    stats["total_correct"] = int(correct.sum())
+    stats["total_scored"] = len(ys)
+
+    # reliability diagram data: equal-count bins with 95% Wilson bars,
+    # overlap-adjusted n (D_eff ~ 2.36 for 15-min windows from 5-min cadence)
+    D_EFF = 2.36
+    if len(ys) >= 40:
+        order = np.argsort(ps)
+        nbins = min(10, len(ys) // 10)
+        rel = []
+        for b in range(nbins):
+            idx = order[b * len(ys) // nbins:(b + 1) * len(ys) // nbins]
+            pb, yb = ps[idx].mean(), ys[idx].mean()
+            n_eff = len(idx) / D_EFF
+            # Wilson 95%
+            z = 1.96
+            d = 1 + z * z / n_eff
+            ctr = (yb + z * z / (2 * n_eff)) / d
+            half = z * np.sqrt(yb * (1 - yb) / n_eff + z * z / (4 * n_eff * n_eff)) / d
+            rel.append({"pred": round(float(pb), 3),
+                        "actual": round(float(yb), 3),
+                        "lo": round(float(max(0, ctr - half)), 3),
+                        "hi": round(float(min(1, ctr + half)), 3),
+                        "n": len(idx)})
+        stats["reliability"] = rel
+
+    # rolling 12-hour Brier: model vs climatology (48 windows trailing)
+    if len(ys) >= 48:
+        roll = []
+        clima_p = 0.5
+        for i in range(48, len(ys) + 1):
+            w_y, w_p = ys[i - 48:i], ps[i - 48:i]
+            mb = float(np.mean((w_p - w_y) ** 2))
+            # climatology = expanding base rate up to i
+            cb = float(np.mean(w_y)) if i > 48 else 0.5
+            cb = min(0.99, max(0.01, cb))
+            kb = float(np.mean((cb - w_y) ** 2))
+            roll.append({"n": i, "model": round(mb, 5), "climatology": round(kb, 5)})
+        # thin to ~60 points
+        stats["brier_rolling"] = roll[::max(1, len(roll) // 60)]
+
     with open(os.path.join(BASE, "stats.json"), "w") as f:
         json.dump(stats, f, indent=1)
     print(json.dumps(stats, indent=1)[:800])
