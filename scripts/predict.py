@@ -17,6 +17,20 @@ BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UA = {"User-Agent": "Mozilla/5.0 (research project)"}
 
 
+def fetch_json(url, retries=3):
+    """Fetch JSON with backoff. Raises RuntimeError (no stack trace) on failure."""
+    import time
+    last = None
+    for a in range(retries):
+        try:
+            req = urllib.request.Request(url, headers=UA)
+            return json.load(urllib.request.urlopen(req, timeout=30))
+        except Exception as e:
+            last = e
+            time.sleep(2 ** a)
+    raise RuntimeError(f"API unreachable after {retries} tries: {type(last).__name__}")
+
+
 def get_candles():
     # pull 4 days of 5-min bars in 1-day chunks (Coinbase caps at 300/request)
     from urllib.parse import quote
@@ -27,13 +41,22 @@ def get_candles():
         ds = de - timedelta(days=1)
         url = ("https://api.exchange.coinbase.com/products/XRP-USD/candles"
                f"?granularity=300&start={quote(ds.isoformat())}&end={quote(de.isoformat())}")
-        req = urllib.request.Request(url, headers=UA)
-        bars.extend(json.load(urllib.request.urlopen(req, timeout=30)))
+        chunk = fetch_json(url)
+        if not isinstance(chunk, list):
+            raise RuntimeError("unexpected candle response shape")
+        bars.extend(chunk)
     out = []
     for b in sorted(bars):
+        # validate bar: [time, low, high, open, close, volume]
+        if not (isinstance(b, list) and len(b) == 6 and b[4] > 0):
+            continue
         out.append({"t": datetime.fromtimestamp(b[0], timezone.utc),
                     "o": b[3], "h": b[2], "l": b[1], "c": b[4], "v": b[5]})
-    return out
+    # dedupe by timestamp, keep sorted
+    seen = {}
+    for c in out:
+        seen[c["t"]] = c
+    return sorted(seen.values(), key=lambda c: c["t"])
 
 
 def main():
@@ -84,4 +107,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except RuntimeError as e:
+        # clean error JSON, no stack trace / internals leaked
+        print(json.dumps({"error": str(e)}))
+    except Exception:
+        print(json.dumps({"error": "inference failed"}))

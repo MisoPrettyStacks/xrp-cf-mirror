@@ -4,13 +4,14 @@ Finalize: train on ALL data, save model artifacts for live inference.
 Includes the leak fix (features from last complete bar before window open).
 """
 import json
+import os
 import numpy as np
 import lightgbm as lgb
 from sklearn.linear_model import LogisticRegression
 from sklearn.isotonic import IsotonicRegression
 from sklearn.metrics import roc_auc_score, brier_score_loss
 
-BASE = "/tmp/cf-mirror"
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 X = np.load(f"{BASE}/data/X.npy")
 y = np.load(f"{BASE}/data/y.npy")
 meta = json.load(open(f"{BASE}/data/feat_meta.json"))

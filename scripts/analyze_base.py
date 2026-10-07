@@ -2,11 +2,12 @@
 """First analysis of the Kalshi truth series: base rates, streaks,
 strike momentum, and time-of-day patterns. No candles needed."""
 import json
+import os
 from collections import defaultdict
 from datetime import datetime, timezone
 
 recs = []
-with open("/tmp/cf-mirror/data/kalshi_history.jsonl", encoding="utf-8") as f:
+with open(f"{BASE}/data/kalshi_history.jsonl", encoding="utf-8") as f:
     for line in f:
         line = line.strip()
         if line:
