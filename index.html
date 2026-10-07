@@ -126,6 +126,19 @@ footer { color: var(--muted); font-size: 13px; margin-top: 30px; }
 </div>
 
 <div class="card">
+  <h2>Agents</h2>
+  <p class="muted" style="font-size:14px">Autonomous loops running this system. Each one acts on its own and logs every decision below — nothing happens silently.</p>
+  <div class="grid g4" style="margin-top:10px" id="agenthealth">
+    <div class="stat"><div class="k">Forecaster</div><div class="v" id="h_fc">—</div><div class="s" id="h_fc_t"></div></div>
+    <div class="stat"><div class="k">Scorer</div><div class="v" id="h_sc">—</div><div class="s" id="h_sc_t"></div></div>
+    <div class="stat"><div class="k">Retrainer</div><div class="v" id="h_rt">—</div><div class="s" id="h_rt_t"></div></div>
+    <div class="stat"><div class="k">Researcher</div><div class="v" id="h_rs">—</div><div class="s" id="h_rs_t"></div></div>
+  </div>
+  <h3 style="margin-top:14px">Agent decisions <span class="muted" style="font-weight:400;font-size:13px">(newest first)</span></h3>
+  <div class="log" id="agentlog"><div class="empty">Loading agent log…</div></div>
+</div>
+
+<div class="card">
   <h2>Self-improvement</h2>
   <table>
     <tr><th>Weekly retrain</th><td>Fresh data → challenger trained → promoted only if it beats the champion out-of-sample. <span class="muted">Champion Brier skill: <span id="champ">+1.04%</span></span></td></tr>
@@ -278,8 +291,48 @@ function tick() {
     String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0");
   if (s === 0) load();
 }
-load(); loadStats();
-setInterval(load, 60000); setInterval(loadStats, 300000); setInterval(tick, 1000); tick();
+const MAIN = "https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/main/";
+const tagColor = t => ({adopt:"up", reject:"muted", recover:"warn", alarm:"down", info:"muted"}[t] || "muted");
+async function loadAgents() {
+  try {
+    const lines = (await (await fetch(MAIN + "data/agent_log.jsonl?t=" + Date.now())).text()).trim().split("\n");
+    const evs = lines.map(l => JSON.parse(l)).reverse();
+    const log = document.getElementById("agentlog");
+    log.innerHTML = "";
+    evs.slice(0, 30).forEach(e => {
+      const d = document.createElement("div");
+      const t = new Date(e.ts).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+      d.innerHTML = `<span class="t">${t}</span><span class="tag ${e.tag}">${e.agent}</span>` +
+        `<span class="${tagColor(e.tag)}">${e.decision}</span><br><span class="muted" style="font-size:12px">${e.detail}</span>`;
+      log.appendChild(d);
+    });
+    // health from latest events + live data
+    const last = {};
+    evs.forEach(e => { if (!last[e.agent]) last[e.agent] = e.ts; });
+    const ago = ts => { const m = Math.round((Date.now() - new Date(ts).getTime())/60000);
+      return m < 60 ? m + "m ago" : Math.round(m/60) + "h ago"; };
+    const set = (id, ok, txt, sub) => {
+      const e = document.getElementById(id); e.textContent = txt;
+      e.className = "v " + (ok ? "up" : "warn");
+      document.getElementById(id + "_t").textContent = sub;
+    };
+    try {
+      const lj = await (await fetch(DATA + "live.json?t=" + Date.now())).json();
+      const age = (Date.now() - new Date(lj.asof).getTime())/60000;
+      set("h_fc", age < 12 ? "● live" : "● stale", "", "forecast " + ago(lj.asof));
+    } catch(e) { set("h_fc", "● ?", "", ""); }
+    try {
+      const sj = await (await fetch(DATA + "stats.json?t=" + Date.now())).json();
+      set("h_sc", "● live", "", sj.updated ? "scored " + ago(sj.updated) : "");
+    } catch(e) { set("h_sc", "● warmup", "", "ledger building"); }
+    set("h_rt", "● armed", "", last.retrain ? "last run " + ago(last.retrain) : "runs Sundays");
+    set("h_rs", "● armed", "", last.research ? "last scan " + ago(last.research) : "runs Mondays");
+  } catch(e) {
+    document.getElementById("agentlog").innerHTML = '<div class="empty">Agent log unavailable.</div>';
+  }
+}
+load(); loadStats(); loadAgents();
+setInterval(load, 60000); setInterval(loadStats, 300000); setInterval(loadAgents, 300000); setInterval(tick, 1000); tick();
 </script>
 </body>
 </html>

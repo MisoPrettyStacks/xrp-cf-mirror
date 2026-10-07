@@ -19,6 +19,18 @@ def run(cmd):
         sys.exit(f"FAILED: {cmd}")
 
 
+def log_decision(agent, decision, detail, tag):
+    """Append to the agent decision log (published to the data branch)."""
+    from datetime import datetime, timezone
+    rec = {"ts": datetime.now(timezone.utc).isoformat(), "agent": agent,
+           "decision": decision, "detail": detail, "tag": tag}
+    lp = os.path.join(BASE, "data", "agent_log.jsonl")
+    os.makedirs(os.path.dirname(lp), exist_ok=True)
+    with open(lp, "a", encoding="utf-8") as f:
+        f.write(json.dumps(rec) + "\n")
+    print(f"[agent-log] {agent}: {decision}")
+
+
 def main():
     # 1. refresh data
     run("python3 scripts/collect_kalshi.py --incremental")
@@ -57,8 +69,16 @@ def main():
                    "promoted": __import__("datetime").datetime.now(
                        __import__("datetime").timezone.utc).isoformat()},
                   open(CHAMPION, "w"), indent=1)
+        log_decision("retrain",
+                     f"challenger promoted (Brier skill {champ_skill:+.2f}% → {chal_skill:+.2f}%)",
+                     "Walk-forward OOS beat the champion beyond the noise margin.",
+                     "adopt")
     else:
         print("challenger not better; champion stands")
+        log_decision("retrain",
+                     f"challenger rejected (Brier skill {chal_skill:+.2f}% vs champion {champ_skill:+.2f}%)",
+                     "Did not beat the champion out-of-sample. Champion stands.",
+                     "reject")
 
 
 if __name__ == "__main__":
