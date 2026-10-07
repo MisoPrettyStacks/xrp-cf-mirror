@@ -478,8 +478,8 @@ async function loadAgents() {
       const sj = await (await fetch(DATA + "stats.json?t=" + Date.now())).json();
       set("h_sc", "● live", "", sj.updated ? "scored " + ago(sj.updated) : "");
     } catch(e) { set("h_sc", "● warmup", "", "ledger building"); }
-    set("h_rt", "● armed", "", last.retrain ? "last run " + ago(last.retrain) : "runs Sundays");
-    set("h_rs", "● armed", "", last.research ? "last scan " + ago(last.research) : "runs Mondays");
+    set("h_rt", "● standby", "", last.retrain ? "last run " + ago(last.retrain) : "runs Sundays");
+    set("h_rs", "● standby", "", last.research ? "last scan " + ago(last.research) : "runs Mondays");
   } catch(e) {
     document.getElementById("agentlog").innerHTML = '<div class="empty">Agent log unavailable.</div>';
   }
