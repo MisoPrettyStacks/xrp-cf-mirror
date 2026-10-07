@@ -26,3 +26,8 @@ jobs:
           git add -A
           git diff --cached --quiet || git commit -m "weekly retrain $(date -u +%F)"
           git push origin main
+      - name: Keep scheduled workflows enabled
+        run: |
+          # GitHub auto-disables scheduled workflows after 60 days of repo inactivity;
+          # the weekly retrain usually touches main, but ensure it explicitly
+          git log -1 --format=%ct | xargs -I{} bash -c 'if [ $(( $(date +%s) - {} )) -gt $(( 50*86400 )) ]; then git commit --allow-empty -m "chore: keep scheduled workflows active" && git push origin main; fi'

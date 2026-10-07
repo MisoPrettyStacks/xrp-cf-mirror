@@ -23,11 +23,15 @@ jobs:
           git checkout origin/main -- models scripts data/feat_meta.json
       - name: Run forecast
         run: |
-          python3 scripts/predict.py > live.json
-          cat live.json
+          python3 scripts/predict.py > live_new.json
+          cat live_new.json
           python3 -c "
-          import json
-          d = json.load(open('live.json'))
+          import json, shutil, sys
+          d = json.load(open('live_new.json'))
+          if 'error' in d:
+              print('forecast failed, keeping previous live.json', file=sys.stderr)
+              sys.exit(0)
+          shutil.move('live_new.json', 'live.json')
           rec = {'asof': d['asof'], 'window_open': d['window_open'],
                  'window_close': d['window_close'], 'p_up': d['p_up']}
           open('ledger.jsonl', 'a').write(json.dumps(rec) + chr(10))

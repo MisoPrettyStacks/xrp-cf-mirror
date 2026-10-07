@@ -6,12 +6,13 @@ open), labels from the Kalshi truth series.
 """
 import csv
 import json
+import os
 import math
 from datetime import datetime, timezone
 
 # load candles
 candles = []
-with open("/tmp/cf-mirror/data/candles_5m.csv", encoding="utf-8") as f:
+with open(f"{BASE}/data/candles_5m.csv", encoding="utf-8") as f:
     for r in csv.DictReader(f):
         candles.append((datetime.fromisoformat(r["time"]),
                         float(r["open"]), float(r["high"]),
@@ -33,7 +34,7 @@ for i in range(289, len(candles)):
 
 # load Kalshi windows
 recs = []
-with open("/tmp/cf-mirror/data/kalshi_history.jsonl", encoding="utf-8") as f:
+with open(f"{BASE}/data/kalshi_history.jsonl", encoding="utf-8") as f:
     for line in f:
         line = line.strip()
         if line:
