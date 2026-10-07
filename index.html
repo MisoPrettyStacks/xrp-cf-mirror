@@ -53,6 +53,41 @@
   <p class="note">Every 5 minutes: fresh 5-min candles &rarr; 21 features (volatility-scaled reversals, 4h regime, candle shape, clock-time) &rarr; LightGBM + logistic regression blend &rarr; isotonic calibration &rarr; shrinkage. Labels come from 6,427 settled 15-minute windows (free public market history). No order-book data, no paid feeds, no secrets.</p>
 </div>
 
+<div class="card">
+  <h2>Live performance <span class="note" id="statsupd"></span></h2>
+  <div class="row"><span class="k">Scored forecasts</span><span id="s_n">—</span></div>
+  <div class="row"><span class="k">Accuracy (last 100)</span><span id="s_acc">—</span></div>
+  <div class="row"><span class="k">AUC (last 100)</span><span id="s_auc">—</span></div>
+  <div class="row"><span class="k">Brier skill (last 100)</span><span id="s_brier">—</span></div>
+  <div class="row"><span class="k">Accuracy (all time)</span><span id="s_acc_all">—</span></div>
+  <div class="row"><span class="k">AUC (all time)</span><span id="s_auc_all">—</span></div>
+  <p class="note" style="margin-top:10px">Every forecast this page makes is logged and scored against the actual settlement. These numbers update automatically — no cherry-picking. The model retrains weekly; a challenger only replaces the champion if it beats it out-of-sample.</p>
+</div>
+
+<script>
+const STATS_URL = "https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/data/stats.json";
+async function loadStats() {
+  try {
+    const r = await fetch(STATS_URL + "?t=" + Date.now());
+    const s = await r.json();
+    document.getElementById("s_n").textContent = s.scored ?? "—";
+    const l100 = s.last_100, all = s.all_time;
+    if (l100) {
+      document.getElementById("s_acc").textContent = (l100.accuracy*100).toFixed(1) + "%";
+      document.getElementById("s_auc").textContent = l100.auc.toFixed(3);
+      document.getElementById("s_brier").textContent = (l100.brier_skill_pct >= 0 ? "+" : "") + l100.brier_skill_pct.toFixed(2) + "%";
+    }
+    if (all) {
+      document.getElementById("s_acc_all").textContent = (all.accuracy*100).toFixed(1) + "%";
+      document.getElementById("s_auc_all").textContent = all.auc.toFixed(3);
+    }
+    if (s.updated) document.getElementById("statsupd").textContent =
+      "· updated " + new Date(s.updated).toLocaleString();
+  } catch(e) { /* stats not yet available */ }
+}
+loadStats(); setInterval(loadStats, 300000);
+</script>
+
 <script>
 const DATA_URL = "https://raw.githubusercontent.com/MisoPrettyStacks/xrp-cf-mirror/data/live.json";
 let winClose = null;

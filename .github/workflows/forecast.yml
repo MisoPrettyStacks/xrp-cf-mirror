@@ -25,10 +25,17 @@ jobs:
         run: |
           python3 scripts/predict.py > live.json
           cat live.json
+          python3 -c "
+          import json
+          d = json.load(open('live.json'))
+          rec = {'asof': d['asof'], 'window_open': d['window_open'],
+                 'window_close': d['window_close'], 'p_up': d['p_up']}
+          open('ledger.jsonl', 'a').write(json.dumps(rec) + chr(10))
+          "
       - name: Commit
         run: |
           git config user.name "forecast-bot"
           git config user.email "noreply@github.com"
-          git add live.json
+          git add live.json ledger.jsonl
           git diff --cached --quiet || git commit -m "forecast $(date -u +%FT%TZ)"
           git push origin data
