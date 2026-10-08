@@ -128,3 +128,4 @@
 {"ts": "2026-10-08T22:24:52Z", "agent": "watchdog", "decision": "dispatched forecast-runner (run 37853290699)", "detail": "live.json asof 2026-10-08T22:04:58Z was 19min stale (>12min threshold); score-ledger OK (stats.json 29min old, <40min), infoflow summary.json fresh (4min), cf-rate fresh (success 9min ago)", "tag": "recover"}
 {"ts":"2026-10-08T22:45:05Z","agent":"watchdog","decision":"triggered forecast-runner","detail":"live.json asof 22:25:02Z, ~19min stale (>12min threshold)","tag":"recover"}
 {"ts":"2026-10-08T22:45:05Z","agent":"watchdog","decision":"triggered score-ledger","detail":"stats.json updated 21:55:37Z, ~49min stale (>40min threshold)","tag":"recover"}
+{"ts":"2026-10-08T23:05:17Z","agent":"watchdog","decision":"dispatched forecast-runner run 37857413167","detail":"live.json asof 2026-10-08T22:45:04Z was ~20 min stale (>12 min threshold); last run completed 22:44:46Z, nothing in flight","tag":"recover"}
