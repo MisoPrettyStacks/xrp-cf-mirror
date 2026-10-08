@@ -120,3 +120,4 @@
 {"ts": "2026-10-08T20:15:02Z", "agent": "watchdog", "decision": "triggered forecast-runner on xrp-cf-mirror (run 37837970893)", "detail": "live.json asof 2026-10-08T19:55:10Z was 19 min old at 20:14Z; threshold 12 min", "tag": "recover"}
 {"ts": "2026-10-08T20:34:53Z", "agent": "watchdog", "decision": "manual dispatch forecast-runner run 37840489915", "detail": "live.json asof 2026-10-08T20:15:01Z was ~19.2 min stale (>12 min); GitHub scheduler not firing 5-min cron", "tag": "recover"}
 {"ts":"2026-10-08T20:45:33Z","agent":"watchdog","decision":"manual dispatch gh workflow run score-ledger","detail":"stats.json updated=2026-10-08T19:55:05Z, ~49min stale (>40min threshold); score-ledger scheduler dropped","tag":"recover"}
+{"ts":"2026-10-08T21:04:40Z","agent":"watchdog","decision":"manual dispatch forecast-runner (run 37844164877)","detail":"live.json asof 2026-10-08T20:47:05Z was ~17min stale (>12min threshold); scheduler dropped the 5-min tick","tag":"recover"}
