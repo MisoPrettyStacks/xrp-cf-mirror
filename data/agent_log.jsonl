@@ -130,3 +130,4 @@
 {"ts":"2026-10-08T22:45:05Z","agent":"watchdog","decision":"triggered score-ledger","detail":"stats.json updated 21:55:37Z, ~49min stale (>40min threshold)","tag":"recover"}
 {"ts":"2026-10-08T23:05:17Z","agent":"watchdog","decision":"dispatched forecast-runner run 37857413167","detail":"live.json asof 2026-10-08T22:45:04Z was ~20 min stale (>12 min threshold); last run completed 22:44:46Z, nothing in flight","tag":"recover"}
 {"ts": "2026-10-08T23:24:59Z", "agent": "watchdog", "decision": "triggered forecast-runner on MisoPrettyStacks/xrp-cf-mirror", "detail": "live.json asof 2026-10-08T23:05:33Z was 19min stale (>12min threshold); dispatched run 37859272215", "tag": "recover"}
+{"ts": "2026-10-08T23:34:59Z", "agent": "watchdog", "decision": "dispatched score-ledger (run 37860221797)", "detail": "stats.json updated 2026-10-08T22:45:08Z, ~49 min stale (>40 min threshold); forecast-runner feed healthy", "tag": "recover"}
