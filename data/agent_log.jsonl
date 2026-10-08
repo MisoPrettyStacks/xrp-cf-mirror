@@ -76,3 +76,5 @@
 {"ts": "2026-10-08T09:34:44Z", "agent": "watchdog", "decision": "triggered score-ledger recovery run", "detail": "stats.json 'updated' was 48min old (2026-10-08T08:46:26Z) > 40min threshold; last scheduled score-ledger run was 08:46Z; manual dispatch run 37757595845 started", "tag": "recover"}
 {"ts": "2026-10-08T09:44:18Z", "agent": "watchdog", "decision": "manual forecast-runner recovery run 37758738351", "detail": "live.json asof 09:24:47Z (~19.5min stale > 12min threshold); GitHub 5-min scheduler still not firing", "tag": "recover"}
 {"ts": "2026-10-08T10:04:30Z", "agent": "watchdog", "decision": "triggered forecast-runner workflow", "detail": "live.json asof 2026-10-08T09:44:47Z was ~19.5 min old (>12 min threshold); stats.json updated 2026-10-08T09:34:48Z within 40 min, OK", "tag": "recover"}
+{"ts":"2026-10-08T10:24:34Z","agent":"watchdog","decision":"triggered forecast-runner","detail":"live.json asof 2026-10-08T10:04:43Z, 20min stale (>12min)","tag":"recover"}
+{"ts":"2026-10-08T10:24:34Z","agent":"watchdog","decision":"triggered score-ledger","detail":"stats.json updated 2026-10-08T09:34:48Z, 50min stale (>40min)","tag":"recover"}
