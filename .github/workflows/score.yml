@@ -27,9 +27,19 @@ jobs:
           git config user.email "noreply@github.com"
           git add stats.json
           git diff --cached --quiet || git commit -m "stats $(date -u +%FT%TZ)"
+          # Discard any stray working-tree modifications (e.g. regenerated
+          # bytecode) so pull --rebase never refuses to run.
+          git checkout -- . || true
+          pushed=false
           for i in 1 2 3 4 5; do
-            git pull --rebase origin data || true
-            git push origin data && break
+            if git pull --rebase origin data && git push origin data; then
+              pushed=true
+              break
+            fi
             echo "push rejected (concurrent update), retrying ($i/5)"
             sleep 5
           done
+          if [ "$pushed" = false ]; then
+            echo "ERROR: failed to push to data branch after 5 retries"
+            exit 1
+          fi
