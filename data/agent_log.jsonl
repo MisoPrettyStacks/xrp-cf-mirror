@@ -79,3 +79,4 @@
 {"ts":"2026-10-08T10:24:34Z","agent":"watchdog","decision":"triggered forecast-runner","detail":"live.json asof 2026-10-08T10:04:43Z, 20min stale (>12min)","tag":"recover"}
 {"ts":"2026-10-08T10:24:34Z","agent":"watchdog","decision":"triggered score-ledger","detail":"stats.json updated 2026-10-08T09:34:48Z, 50min stale (>40min)","tag":"recover"}
 {"ts": "2026-10-08T10:44:34Z", "agent": "watchdog", "decision": "triggered manual recovery run of forecast-runner (run 37765462553)", "detail": "live.json asof 2026-10-08T10:04:43Z was ~40min stale (>12min threshold); score-ledger healthy; all workflows active", "tag": "recover"}
+{"ts": "2026-10-08T11:04:46Z", "agent": "watchdog", "decision": "triggered forecast-runner (run 37767675517)", "detail": "live.json asof 2026-10-08T10:44:50Z was ~19 min stale (>12 min threshold); 5-min cron did not fire", "tag": "recover"}
