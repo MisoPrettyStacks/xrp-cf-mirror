@@ -110,3 +110,4 @@
 {"ts": "2026-10-08T17:59:45Z", "agent": "watchdog", "decision": "triggered forecast-runner", "detail": "live.json asof 2026-10-08T17:45:17Z was 13.2min old (>12min); no run in progress; run 37820776288 dispatched; GitHub scheduler still dropping scheduled runs", "tag": "recover"}
 {"ts":"2026-10-08T18:15:41Z","agent":"watchdog","decision":"triggered forecast-runner (run 37822820552)","detail":"live.json asof 17:59:31Z, 15.2min stale (>12min threshold); 2nd consecutive recovery","tag":"recover"}
 {"ts":"2026-10-08T18:15:41Z","agent":"watchdog","decision":"triggered score-ledger (run 37822826873)","detail":"stats.json updated 17:30:19Z, 44.4min stale (>40min threshold); 1st consecutive recovery","tag":"recover"}
+{"ts": "2026-10-08T18:34:41Z", "agent": "watchdog", "decision": "triggered forecast-runner", "detail": "live.json asof 2026-10-08T18:15:29Z was 19min stale (>12min threshold); dispatched run 37825354515", "tag": "recover"}
