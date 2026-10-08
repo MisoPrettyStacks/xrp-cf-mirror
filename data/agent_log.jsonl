@@ -78,3 +78,4 @@
 {"ts": "2026-10-08T10:04:30Z", "agent": "watchdog", "decision": "triggered forecast-runner workflow", "detail": "live.json asof 2026-10-08T09:44:47Z was ~19.5 min old (>12 min threshold); stats.json updated 2026-10-08T09:34:48Z within 40 min, OK", "tag": "recover"}
 {"ts":"2026-10-08T10:24:34Z","agent":"watchdog","decision":"triggered forecast-runner","detail":"live.json asof 2026-10-08T10:04:43Z, 20min stale (>12min)","tag":"recover"}
 {"ts":"2026-10-08T10:24:34Z","agent":"watchdog","decision":"triggered score-ledger","detail":"stats.json updated 2026-10-08T09:34:48Z, 50min stale (>40min)","tag":"recover"}
+{"ts": "2026-10-08T10:44:34Z", "agent": "watchdog", "decision": "triggered manual recovery run of forecast-runner (run 37765462553)", "detail": "live.json asof 2026-10-08T10:04:43Z was ~40min stale (>12min threshold); score-ledger healthy; all workflows active", "tag": "recover"}
