@@ -106,3 +106,4 @@
 {"ts": "2026-10-08T17:05:00+00:00", "agent": "watchdog", "decision": "triggered forecast-runner recovery run", "detail": "live.json asof 2026-10-08T16:46:52Z was ~18.5 min old (>12 min threshold); run 37813992925", "tag": "recover"}
 {"ts": "2026-10-08T17:30:42Z", "agent": "watchdog", "decision": "triggered forecast-runner recovery run", "detail": "live.json asof 2026-10-08T17:06:51Z was ~17.6 min old (>12 min threshold); run 37817020808 (2nd consecutive recovery)", "tag": "recover"}
 {"ts": "2026-10-08T17:30:42Z", "agent": "watchdog", "decision": "triggered score-ledger recovery run", "detail": "stats.json updated 2026-10-08T16:36:20Z was ~48 min old (>40 min threshold); run 37817026764 (1st consecutive)", "tag": "recover"}
+{"ts": "2026-10-08T17:45:12Z", "agent": "watchdog", "decision": "triggered forecast-runner", "detail": "live.json asof 2026-10-08T17:30:19Z was 14.2min old (>12min threshold); GitHub scheduler likely dropped the 5-min run", "tag": "recover"}
