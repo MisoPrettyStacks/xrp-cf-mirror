@@ -172,3 +172,4 @@
 {"ts": "2026-10-09T09:08:25Z", "agent": "watchdog", "decision": "dispatched score-ledger (run 37908998959)", "detail": "stats.json updated 49min stale (>40min); 1st consecutive recovery", "tag": "recover"}
 {"ts":"2026-10-09T09:24:40Z","agent":"watchdog","decision":"triggered forecast-runner (xrp-cf-mirror): live.json asof 19min old (>12min)","detail":"feed stale; dispatched workflow run","tag":"recover"}
 {"ts": "2026-10-09T09:44:42Z", "agent": "watchdog", "decision": "restarted forecast-runner", "detail": "live.json asof 2026-10-09T09:24:52Z was ~19min old (>12min); last successful forecast-runner run 09:24:33Z; dispatch 37913222321", "tag": "recover"}
+{"ts": "2026-10-09T09:54:35Z", "agent": "watchdog", "decision": "triggered score-ledger workflow (run 37914272503)", "detail": "stats.json updated 2026-10-09T09:05:30Z, older than 40-min threshold", "tag": "recover"}
