@@ -187,3 +187,4 @@
 {"ts": "2026-10-09T12:44:35Z", "agent": "watchdog", "decision": "triggered forecast-runner (recovery)", "detail": "live.json asof was >12min old (stale), dispatched https://github.com/MisoPrettyStacks/xrp-cf-mirror/actions/runs/37932026474", "tag": "recover"}
 {"ts":"2026-10-09T13:04:54Z","agent":"watchdog","decision":"dispatched forecast-runner","detail":"live.json asof 2026-10-09T12:44:51Z was 19.5min old (>12min)","tag":"recover"}
 {"ts":"2026-10-09T13:04:54Z","agent":"watchdog","decision":"dispatched score-ledger","detail":"stats.json updated 2026-10-09T12:14:57Z was 49min old (>40min)","tag":"recover"}
+{"ts": "2026-10-09T13:26:47Z", "agent": "watchdog", "decision": "dispatched forecast-runner (run 37936747035)", "detail": "live.json asof 2026-10-09T13:04:56Z was ~19.5min stale (>12min); no run in flight; GitHub scheduler dropping triggers", "tag": "recover"}
