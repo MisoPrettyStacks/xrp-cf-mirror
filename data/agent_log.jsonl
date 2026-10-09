@@ -178,3 +178,4 @@
 {"ts":"2026-10-09T10:45:00Z","agent":"watchdog","decision":"dispatched forecast-runner (live.json asof 2026-10-09T10:25:11Z, 19min stale)","detail":"forecast-runner stuck: no schedule fire; run 37919476488","tag":"recover"}
 {"ts":"2026-10-09T10:45:00Z","agent":"watchdog","decision":"dispatched score-ledger (stats.json updated 2026-10-09T09:54:49Z, 49min stale)","detail":"score-ledger stuck: run 37919480708","tag":"recover"}
 {"ts": "2026-10-09T11:04:55Z", "agent": "watchdog", "decision": "triggered forecast-runner (manual dispatch)", "detail": "live.json asof 2026-10-09T10:45:06Z was 19min stale (>12min); last run finished 10:44Z; dispatched run per staleness rule", "tag": "recover"}
+{"ts": "2026-10-09T11:26:00Z", "agent": "watchdog", "decision": "dispatched forecast-runner run 37923600966", "detail": "live.json asof 2026-10-09T11:05:05Z was 19min stale (>12min); prior dispatch succeeded but scheduler dropped scheduled slots again", "tag": "recover"}
