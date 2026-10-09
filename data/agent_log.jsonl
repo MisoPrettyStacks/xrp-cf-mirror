@@ -166,3 +166,4 @@
 {"ts": "2026-10-09T07:44:37Z", "agent": "watchdog", "decision": "restarted stuck forecast-runner via gh workflow run (run 37900756899)", "detail": "live.json asof 2026-10-09T07:25:05Z, ~19 min stale (>12 min threshold)", "tag": "recover"}
 {"ts": "2026-10-09T08:04:35Z", "agent": "watchdog", "decision": "dispatched forecast-runner", "detail": "live.json asof was 2026-10-09T07:44:53Z, ~19min old (>12min threshold); forecast-runner stuck", "tag": "recover"}
 {"ts": "2026-10-09T08:14:54Z", "agent": "watchdog", "decision": "dispatched score-ledger via gh workflow run (run 37903759027)", "detail": "stats.json updated 2026-10-09T07:27:02Z, ~47 min stale (>40 min threshold); score-ledger stuck", "tag": "recover"}
+{"ts": "2026-10-09T08:24:36Z", "agent": "watchdog", "decision": "dispatched forecast-runner for xrp-cf-mirror", "detail": "live.json asof 2026-10-09T08:04:53Z was ~19 min stale (>12 min threshold)", "tag": "recover"}
