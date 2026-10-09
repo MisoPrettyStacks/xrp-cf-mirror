@@ -1,1 +1,1 @@
-{"asof": "2026-10-09T13:04:56.542630+00:00", "window_open": "2026-10-09T13:00:00+00:00", "window_close": "2026-10-09T13:15:00+00:00", "p_up": 0.526, "p_down": 0.474, "components": {"lgbm": 0.6027, "logreg": 0.5077}, "model": "lgbm+logreg blend, isotonic-calibrated, shrunk (OOS AUC 0.55)"}
+{"asof": "2026-10-09T13:25:52.582287+00:00", "window_open": "2026-10-09T13:15:00+00:00", "window_close": "2026-10-09T13:30:00+00:00", "p_up": 0.4931, "p_down": 0.5069, "components": {"lgbm": 0.5041, "logreg": 0.4835}, "model": "lgbm+logreg blend, isotonic-calibrated, shrunk (OOS AUC 0.55)"}
