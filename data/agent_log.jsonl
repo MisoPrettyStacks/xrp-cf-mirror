@@ -170,3 +170,4 @@
 {"ts": "2026-10-09T08:44:39Z", "agent": "watchdog", "decision": "triggered forecast-runner on xrp-cf-mirror", "detail": "live.json asof was >12min stale (08:24:49Z), scheduler dropped the 5-min slot", "tag": "recover"}
 {"ts": "2026-10-09T09:08:25Z", "agent": "watchdog", "decision": "dispatched forecast-runner (run 37908986246)", "detail": "live.json asof 19.3min stale (>12min); scheduler not firing, 2nd consecutive recovery", "tag": "recover"}
 {"ts": "2026-10-09T09:08:25Z", "agent": "watchdog", "decision": "dispatched score-ledger (run 37908998959)", "detail": "stats.json updated 49min stale (>40min); 1st consecutive recovery", "tag": "recover"}
+{"ts":"2026-10-09T09:24:40Z","agent":"watchdog","decision":"triggered forecast-runner (xrp-cf-mirror): live.json asof 19min old (>12min)","detail":"feed stale; dispatched workflow run","tag":"recover"}
