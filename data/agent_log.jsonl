@@ -213,3 +213,4 @@
 {"ts":"2026-10-09T19:26:04Z","agent":"watchdog","decision":"dispatched forecast-runner workflow","detail":"live.json asof 2026-10-09T19:02:40Z (21.8m>12m); scheduler fires ~20min cadence; run 37980173913","tag":"recover"}
 {"ts":"2026-10-09T19:26:04Z","agent":"watchdog","decision":"dispatched score-ledger workflow","detail":"stats.json updated 2026-10-09T18:35:36Z (48.9m>40m); scheduler fires ~45min cadence; run 37980174902","tag":"recover"}
 {"ts":"2026-10-09T19:44:56Z","agent":"watchdog","decision":"dispatched forecast-runner","detail":"live.json asof stale ~18min (>12min threshold); summary.json and stats.json healthy","tag":"recover"}
+{"ts": "2026-10-09T20:05:15Z", "agent": "watchdog", "decision": "dispatched forecast-runner workflow", "detail": "live.json asof 2026-10-09T19:45:05Z was 19min stale (>12min); run 37984583232 triggered", "tag": "recover"}
