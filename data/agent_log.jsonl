@@ -160,3 +160,5 @@
 {"ts": "2026-10-09T06:14:33Z", "agent": "watchdog", "decision": "triggered forecast-runner (stale 19min > 12min threshold)", "detail": "live.json asof 2026-10-09T05:55:14Z vs now ~06:14Z; scheduler drop or runner stuck", "tag": "recover"}
 {"ts": "2026-10-09T06:14:33Z", "agent": "watchdog", "decision": "triggered score-ledger (stale 49min > 40min threshold)", "detail": "stats.json updated 2026-10-09T05:24:50Z vs now ~06:14Z; scheduled runs not firing", "tag": "recover"}
 {"ts": "2026-10-09T06:34:54Z", "agent": "watchdog", "decision": "dispatched forecast-runner (run 37894243669)", "detail": "live.json asof 2026-10-09T06:14:48Z was ~19.5min old (>12min); scheduler-drop pattern persists, dispatch succeeded", "tag": "recover"}
+{"ts": "2026-10-09T07:04:41Z", "agent": "watchdog", "decision": "dispatched forecast-runner", "detail": "live.json asof 2026-10-09T06:43:04Z was 21min stale (>12min); run 37896965296", "tag": "recover"}
+{"ts": "2026-10-09T07:04:41Z", "agent": "watchdog", "decision": "dispatched score-ledger", "detail": "stats.json updated 2026-10-09T06:14:51Z was 50min stale (>40min); run 37896965357", "tag": "recover"}
