@@ -227,3 +227,4 @@
 {"ts": "2026-10-09T22:45:17Z", "agent": "watchdog", "decision": "dispatched forecast-runner", "detail": "live.json asof 2026-10-09T22:24:57Z was 19.4min stale (>12min); run 38000843490", "tag": "recover"}
 {"ts": "2026-10-09T22:45:17Z", "agent": "watchdog", "decision": "dispatched score-ledger", "detail": "stats.json updated 2026-10-09T22:04:54Z was 40.2min stale (>40min); run 38000892568", "tag": "recover"}
 {"ts": "2026-10-09T23:04:46Z", "agent": "watchdog", "decision": "dispatched forecast-runner (run 38002578271)", "detail": "live.json asof 2026-10-09T22:44:58Z was ~19min old (>12min threshold); feed stuck", "tag": "recover"}
+{"ts": "2026-10-09T23:24:58Z", "agent": "watchdog", "decision": "restarted forecast-runner (live.json asof 15.1 min stale > 12 min threshold)", "detail": "dispatched run 38004287737", "tag": "recover"}
