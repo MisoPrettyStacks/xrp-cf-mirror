@@ -251,3 +251,4 @@
 {"ts":"2026-10-10T04:56:54Z","agent":"watchdog","decision":"dispatched forecast-runner","detail":"live.json asof 2026-10-10T04:35:31Z older than 12min; scheduler drop suspected","tag":"recover"}
 {"ts":"2026-10-10T04:56:54Z","agent":"watchdog","decision":"dispatched score-ledger","detail":"stats.json updated 2026-10-10T04:07:24Z older than 40min; score-ledger stuck","tag":"recover"}
 {"ts": "2026-10-10T05:15:02Z", "agent": "watchdog", "decision": "dispatched forecast-runner", "detail": "live.json asof 2026-10-10T04:54:59Z was 19.5 min stale (>12 min bar); last scheduled run completed 04:54:42Z; scheduler drop; manual dispatch run 38026849792", "tag": "recover"}
+{"ts":"2026-10-10T05:34:52Z","agent":"watchdog","decision":"dispatched forecast-runner workflow","detail":"live.json asof 2026-10-10T05:15:05Z (19min stale, threshold 12min); dispatched forecast-runner on MisoPrettyStacks/xrp-cf-mirror","tag":"recover"}
