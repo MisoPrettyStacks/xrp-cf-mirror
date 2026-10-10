@@ -287,3 +287,4 @@
 {"ts": "2026-10-10T13:14:46Z", "agent": "watchdog", "decision": "dispatched score-ledger", "detail": "stats.json updated 50min stale (>40min)", "tag": "recover"}
 {"ts": "2026-10-10T13:35:12Z", "agent": "watchdog", "decision": "dispatched forecast-runner on xrp-cf-mirror (run 38056276006)", "detail": "live.json asof 2026-10-10T13:14:52Z was ~19.5min old (>12min threshold); scheduler dropped 5-min runs again", "tag": "recover"}
 {"ts": "2026-10-10T13:54:55Z", "agent": "watchdog", "decision": "dispatched forecast-runner", "detail": "live.json asof 2026-10-10T13:35:24Z was 19 min stale (>12 min); run id 38057543525", "tag": "recover"}
+{"ts":"2026-10-10T14:05:24Z","agent":"watchdog","decision":"triggered score-ledger workflow (manual dispatch)","detail":"stats.json updated at 2026-10-10T13:14:50Z, ~50min stale vs 40min threshold","tag":"recover"}
