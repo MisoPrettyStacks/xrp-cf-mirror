@@ -312,3 +312,4 @@
 {"ts": "2026-10-10T19:45:01Z", "agent": "watchdog", "decision": "dispatched forecast-runner", "detail": "live.json asof 2026-10-10T19:24:57Z ~20min stale; last completed run 19:24:36Z, nothing in flight", "tag": "recover"}
 {"ts":"2026-10-10T20:05:05Z","agent":"watchdog","decision":"restarted forecast-runner (run 38082325171)","detail":"live.json asof 2026-10-10T19:45:12Z, stale 19min > 12min threshold","tag":"recover"}
 {"ts":"2026-10-10T20:05:05Z","agent":"watchdog","decision":"restarted score-ledger (run 38082327254)","detail":"stats.json updated 2026-10-10T19:18:56Z, stale 45min > 40min threshold","tag":"recover"}
+{"ts": "2026-10-10T20:25:19Z", "agent": "watchdog", "decision": "dispatched forecast-runner", "detail": "live.json asof 2026-10-10T20:05:13Z (19 min stale, threshold 12 min); last completed run 20:04:51Z; no run in flight; dispatch run 38083664824", "tag": "recover"}
