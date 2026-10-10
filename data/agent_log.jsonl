@@ -233,3 +233,5 @@
 {"ts": "2026-10-10T00:16:12Z", "agent": "watchdog", "decision": "dispatched score-ledger workflow", "detail": "stats.json updated at 2026-10-09T23:34:03Z was ~41min stale (>40min threshold); manual dispatch via gh workflow run", "tag": "recover"}
 {"ts": "2026-10-10T00:26:10Z", "agent": "watchdog", "decision": "dispatched forecast-runner (recovery)", "detail": "live.json asof 2026-10-10T00:11:21Z was 13.8min stale (>12min threshold); GitHub scheduler dropped 5-min slots again; manual dispatch run 38009083717", "tag": "recover"}
 {"ts":"2026-10-10T00:45:24Z","agent":"watchdog","decision":"dispatched forecast-runner","detail":"live.json asof 17min stale (>12min), last scheduled slot dropped by GitHub scheduler","tag":"recover"}
+{"ts": "2026-10-10T01:04:53Z", "agent": "watchdog", "decision": "triggered forecast-runner", "detail": "live.json asof 2026-10-10T00:45:34Z was 19 min stale (>12 min threshold); run 38011736759", "tag": "recover"}
+{"ts": "2026-10-10T01:04:53Z", "agent": "watchdog", "decision": "triggered score-ledger", "detail": "stats.json updated 2026-10-10T00:16:01Z was 48 min stale (>40 min threshold); run 38011739132", "tag": "recover"}
