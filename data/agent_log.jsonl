@@ -307,3 +307,4 @@
 {"ts":"2026-10-10T18:15:05Z","agent":"watchdog","decision":"dispatched forecast-runner (xrp-cf-mirror)","detail":"live.json asof 2026-10-10T17:55:00Z was 19 min stale (>12 min threshold)","tag":"recover"}
 {"ts":"2026-10-10T18:35:42Z","agent":"watchdog","decision":"dispatched forecast-runner","detail":"live.json asof 2026-10-10T18:15:05Z, ~19.5min stale >12min threshold; run https://github.com/MisoPrettyStacks/xrp-cf-mirror/actions/runs/38076356953","tag":"recover"}
 {"ts":"2026-10-10T18:35:42Z","agent":"watchdog","decision":"dispatched score-ledger","detail":"stats.json updated 2026-10-10T17:45:19Z, ~49min stale >40min threshold; run https://github.com/MisoPrettyStacks/xrp-cf-mirror/actions/runs/38076359238","tag":"recover"}
+{"ts":"2026-10-10T19:05:21Z","agent":"watchdog","decision":"triggered forecast-runner","detail":"live.json asof 2026-10-10T18:51:28Z older than 12min; last completed run 18:51:09Z","tag":"recover"}
