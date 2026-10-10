@@ -242,3 +242,4 @@
 {"ts": "2026-10-10T02:34:41Z", "agent": "watchdog", "decision": "dispatched forecast-runner (xrp-cf-mirror)", "detail": "live.json asof 2026-10-10T02:17:45Z was ~17min stale (>12min threshold)", "tag": "recover"}
 {"ts":"2026-10-10T02:54:49Z","agent":"watchdog","decision":"dispatched forecast-runner","detail":"live.json asof 2026-10-10T02:34:59Z (~20min old, >12min threshold); last schedule run 02:34:36Z completed; no run in flight","tag":"recover"}
 {"ts": "2026-10-10T03:14:41Z", "agent": "watchdog", "decision": "dispatched forecast-runner on xrp-cf-mirror", "detail": "live.json asof 2026-10-10T02:55:04Z was ~19min stale (>12min threshold)", "tag": "recover"}
+{"ts":"2026-10-10T03:26:00Z","agent":"watchdog","decision":"triggered score-ledger (xrp-cf-mirror)","detail":"stats.json updated at 2026-10-10T02:39:11Z (~45 min old, past 40-min threshold); dispatched run 38020456405","tag":"recover"}
