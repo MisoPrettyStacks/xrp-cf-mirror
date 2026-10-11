@@ -351,3 +351,4 @@
 {"ts": "2026-10-11T05:25:07Z", "agent": "watchdog", "decision": "dispatch forecast-runner", "detail": "live.json asof 2026-10-11T05:04:44Z stale >12min", "tag": "recover"}
 {"ts": "2026-10-11T05:25:07Z", "agent": "watchdog", "decision": "dispatch score-ledger", "detail": "stats.json updated 2026-10-11T04:34:56Z stale >40min", "tag": "recover"}
 {"ts": "2026-10-11T05:45:07.770089+00:00", "agent": "watchdog", "decision": "dispatched forecast-runner recovery", "detail": "live.json asof 2026-10-11T05:25:25Z was 20min stale (>12min); last successful scheduled run 05:25:03Z; GitHub scheduler dropping slots again", "tag": "recover"}
+{"ts":"2026-10-11T06:06:00Z","agent":"watchdog","decision":"dispatched forecast-runner (run 38116874769) — live.json asof 05:45:08Z was 19 min stale (>12 min threshold); last scheduled slot dropped by GitHub scheduler","detail":"xrp-cf-mirror forecast feed stuck","tag":"recover"}
