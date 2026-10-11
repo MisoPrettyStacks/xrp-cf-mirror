@@ -345,3 +345,4 @@
 {"ts": "2026-10-11T03:44:42.998593+00:00", "agent": "watchdog", "decision": "dispatch score-ledger", "detail": "stats.json updated 2026-10-11T02:55:27Z was 49min old (>40min threshold)", "tag": "recover"}
 {"ts": "2026-10-11T04:06:00Z", "agent": "watchdog", "decision": "dispatch forecast-runner", "detail": "live.json asof 2026-10-11T03:44:55Z was 19min old (>12min threshold); last successful run 03:44:33Z, scheduler dropping 5min slots", "tag": "recover"}
 {"ts": "2026-10-11T04:24:58Z", "agent": "watchdog", "decision": "dispatched forecast-runner (workflow_dispatch, run 38111499925)", "detail": "live.json asof 2026-10-11T04:04:57Z was ~19min stale (>12min threshold); last scheduled completion 04:04:38Z", "tag": "recover"}
+{"ts": "2026-10-11T04:34:45Z", "agent": "watchdog", "decision": "dispatched score-ledger workflow", "detail": "stats.json updated 2026-10-11T03:44:51Z, ~50min stale (>40min threshold); recovery run 38112019713", "tag": "recover"}
