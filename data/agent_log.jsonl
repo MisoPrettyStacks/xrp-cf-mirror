@@ -337,3 +337,4 @@
 {"ts":"2026-10-11T02:05:08Z","agent":"watchdog","decision":"dispatched forecast-runner (run 38103966356)","detail":"live.json asof 2026-10-11T01:45:23Z was 19min old (>12min); GitHub scheduler keeps dropping the 5-min cron slots","tag":"recover"}
 {"ts":"2026-10-11T02:05:08Z","agent":"watchdog","decision":"dispatched score-ledger (run 38103968552)","detail":"stats.json updated 2026-10-11T01:19:09Z was 45min old (>40min)","tag":"recover"}
 {"ts":"2026-10-11T02:25:00Z","agent":"watchdog","decision":"dispatched forecast-runner run 38105085242","detail":"live.json asof 2026-10-11T02:05:05Z was 19min stale (>12min); mirror 5-min cron slots keep being dropped GitHub-side","tag":"recover"}
+{"ts": "2026-10-11T02:45:10Z", "agent": "watchdog", "decision": "dispatched forecast-runner (live.json asof 2026-10-11T02:25:29Z, ~19min old, >12min threshold)", "detail": "run https://github.com/MisoPrettyStacks/xrp-cf-mirror/actions/runs/38106149294", "tag": "recover"}
