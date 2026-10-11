@@ -334,3 +334,5 @@
 {"ts":"2026-10-11T01:05:07Z","agent":"watchdog","decision":"dispatched forecast-runner (run 38100608938)","detail":"live.json asof 2026-10-11T00:49:43Z was 14.6 min old (>12 min threshold)","tag":"recover"}
 {"ts": "2026-10-11T01:24:47Z", "agent": "watchdog", "decision": "triggered forecast-runner on xrp-cf-mirror", "detail": "live.json asof 2026-10-11T01:05:13Z was 19min stale (>12min); run 38101738056 dispatched", "tag": "recover"}
 {"ts": "2026-10-11T01:45:13Z", "agent": "watchdog", "decision": "dispatched forecast-runner (recovery)", "detail": "live.json asof 2026-10-11T01:24:58Z was 19.5min stale (>12min); last GitHub scheduled slots dropped; run 38102870431", "tag": "recover"}
+{"ts":"2026-10-11T02:05:08Z","agent":"watchdog","decision":"dispatched forecast-runner (run 38103966356)","detail":"live.json asof 2026-10-11T01:45:23Z was 19min old (>12min); GitHub scheduler keeps dropping the 5-min cron slots","tag":"recover"}
+{"ts":"2026-10-11T02:05:08Z","agent":"watchdog","decision":"dispatched score-ledger (run 38103968552)","detail":"stats.json updated 2026-10-11T01:19:09Z was 45min old (>40min)","tag":"recover"}
